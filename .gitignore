@@ -1,0 +1,75 @@
+# ==============================
+# Environment & Secrets
+# ==============================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secret_key.txt
+
+# ==============================
+# Python
+# ==============================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ==============================
+# Virtual Environment
+# ==============================
+.venv/
+venv/
+env/
+ENV/
+
+# ==============================
+# Django
+# ==============================
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+static_root/
+*.log
+# Database dumps/backups
+*.sql
+*.dump
+*.backup
+
+# ==============================
+# django-tailwind / Node (if used)
+# ==============================
+node_modules/
+theme/static_src/node_modules/
+npm-debug.log*
+
+# ==============================
+# Distribution / packaging
+# ==============================
+build/
+dist/
+*.egg-info/
+
+# ==============================
+# Testing / coverage
+# ==============================
+.coverage
+htmlcov/
+.pytest_cache/
+
+# ==============================
+# IDE / Editor
+# ==============================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==============================
+# OS files
+# ==============================
+.DS_Store
+Thumbs.db
+desktop.ini
