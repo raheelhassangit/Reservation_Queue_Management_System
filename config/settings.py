@@ -46,9 +46,12 @@ INSTALLED_APPS = [
     "rest_framework",
     "tailwind",
     "theme",
+    "accounts",
 ]
 
 TAILWIND_APP_NAME = "theme"
+
+AUTH_USER_MODEL = "accounts.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
