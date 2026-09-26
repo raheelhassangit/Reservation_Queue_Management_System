@@ -44,3 +44,8 @@ class ProviderRegisterSerializer(serializers.ModelSerializer):
         user.save()
         Organization.objects.create(owner=user, name=org_name)
         return user
+    
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "email", "role"]    
