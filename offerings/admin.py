@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import Offering, Seat
 
-# Register your models here.
+admin.site.register(Offering)
+admin.site.register(Seat)
