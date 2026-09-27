@@ -24,3 +24,23 @@ class Offering(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.organization.name})"
+    
+class Seat(models.Model):
+    class Status(models.TextChoices):
+        AVAILABLE = "available", "Available"
+        RESERVED = "reserved", "Reserved"
+        BOOKED = "booked", "Booked"
+
+    offering = models.ForeignKey(
+        Offering, on_delete=models.CASCADE, related_name="seats"
+    )
+    seat_number = models.CharField(max_length=10)     # "A1", or just "17"
+    status = models.CharField(
+        max_length=10, choices=Status.choices, default=Status.AVAILABLE
+    )
+
+    class Meta:
+        unique_together = ("offering", "seat_number")
+
+    def __str__(self):
+        return f"{self.offering.name} - {self.seat_number}"    
