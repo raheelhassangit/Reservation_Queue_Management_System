@@ -12,7 +12,7 @@ class OfferingAdmin(admin.ModelAdmin):
 
 @admin.register(Seat)
 class SeatAdmin(admin.ModelAdmin):
-    list_display = ("id", "seat_number", "offering", "status")
+    list_display = ("id", "seat_number", "offering", "status", "held_by", "held_until")
     list_filter = ("offering", "status")
     search_fields = ("id", "seat_number")
     list_select_related = ("offering",)
