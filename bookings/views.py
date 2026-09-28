@@ -1,7 +1,10 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .models import Booking
-from .serializers import BookingCreateSerializer, BookingSerializer
+from .serializers import BookingSerializer, SeatSelectionSerializer
+from .services import confirm_booking, hold_seats
 
 
 class IsCustomer(permissions.BasePermission):
@@ -9,7 +12,8 @@ class IsCustomer(permissions.BasePermission):
         return request.user.is_authenticated and request.user.role == "customer"
 
 
-class BookingListCreateView(generics.ListCreateAPIView):
+class BookingListView(generics.ListAPIView):
+    serializer_class = BookingSerializer
     permission_classes = [IsCustomer]
 
     def get_queryset(self):
@@ -19,13 +23,26 @@ class BookingListCreateView(generics.ListCreateAPIView):
             .prefetch_related("booked_seats__seat")
         )
 
-    def get_serializer_class(self):
-        if self.request.method == "POST":
-            return BookingCreateSerializer
-        return BookingSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        booking = serializer.save()
+class HoldSeatsView(APIView):
+    permission_classes = [IsCustomer]
+
+    def post(self, request):
+        s = SeatSelectionSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        until = hold_seats(
+            request.user, s.validated_data["offering"], s.validated_data["seat_ids"]
+        )
+        return Response({"seat_ids": s.validated_data["seat_ids"], "held_until": until})
+
+
+class ConfirmBookingView(APIView):
+    permission_classes = [IsCustomer]
+
+    def post(self, request):
+        s = SeatSelectionSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        booking = confirm_booking(
+            request.user, s.validated_data["offering"], s.validated_data["seat_ids"]
+        )
         return Response(BookingSerializer(booking).data, status=201)
