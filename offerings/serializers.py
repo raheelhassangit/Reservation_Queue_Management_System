@@ -24,3 +24,31 @@ class OfferingCreateSerializer(serializers.ModelSerializer):
         ]
         Seat.objects.bulk_create(seats)
         return offering
+
+class SeatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Seat
+        fields = ["id", "seat_number", "status"]
+
+
+class OfferingListSerializer(serializers.ModelSerializer):
+    organization_name = serializers.CharField(source="organization.name", read_only=True)
+    category_display = serializers.CharField(source="display_category", read_only=True)
+    available_seats = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Offering
+        fields = [
+            "id", "name", "category_display", "organization_name",
+            "total_seats", "available_seats", "max_seats_per_booking",
+        ]
+
+    def get_available_seats(self, obj):
+        return obj.seats.filter(status="available").count()
+
+
+class OfferingDetailSerializer(OfferingListSerializer):
+    seats = SeatSerializer(many=True, read_only=True)
+
+    class Meta(OfferingListSerializer.Meta):
+        fields = OfferingListSerializer.Meta.fields + ["seats"]    
