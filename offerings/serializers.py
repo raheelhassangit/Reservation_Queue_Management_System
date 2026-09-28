@@ -44,6 +44,8 @@ class OfferingListSerializer(serializers.ModelSerializer):
         ]
 
     def get_available_seats(self, obj):
+        if hasattr(obj, "available_count"):
+            return obj.available_count
         return obj.seats.filter(status="available").count()
 
 
