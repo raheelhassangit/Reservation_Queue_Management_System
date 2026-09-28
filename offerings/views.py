@@ -6,7 +6,7 @@ from .serializers import (
     OfferingListSerializer,
     OfferingDetailSerializer,
 )
-
+from django.utils import timezone
 
 class IsProvider(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -14,13 +14,19 @@ class IsProvider(permissions.BasePermission):
 
 
 def offerings_queryset():
+    now = timezone.now()
     return Offering.objects.select_related("organization").annotate(
-        available_count=Count("seats", filter=Q(seats__status="available"))
+        available_count=Count(
+            "seats",
+            filter=Q(seats__status="available")
+            | Q(seats__status="reserved", seats__held_until__lte=now),
+        )
     )
 
 
 class OfferingListCreateView(generics.ListCreateAPIView):
-    queryset = offerings_queryset()
+    def get_queryset(self):
+        return offerings_queryset()
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -34,6 +40,8 @@ class OfferingListCreateView(generics.ListCreateAPIView):
 
 
 class OfferingDetailView(generics.RetrieveAPIView):
-    queryset = offerings_queryset().prefetch_related("seats")
     serializer_class = OfferingDetailSerializer
     permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        return offerings_queryset().prefetch_related("seats")

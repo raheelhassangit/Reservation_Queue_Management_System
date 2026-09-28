@@ -26,6 +26,7 @@ class OfferingCreateSerializer(serializers.ModelSerializer):
         return offering
 
 class SeatSerializer(serializers.ModelSerializer):
+    status = serializers.CharField(source="effective_status", read_only=True)
     class Meta:
         model = Seat
         fields = ["id", "seat_number", "status"]
