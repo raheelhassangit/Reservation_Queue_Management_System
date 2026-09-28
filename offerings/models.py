@@ -1,5 +1,7 @@
 from django.db import models
 from organizations.models import Organization
+from django.conf import settings
+from django.utils import timezone
 
 class Offering(models.Model):
     class Category(models.TextChoices):
@@ -38,7 +40,26 @@ class Seat(models.Model):
     status = models.CharField(
         max_length=10, choices=Status.choices, default=Status.AVAILABLE
     )
+    held_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name="held_seats",
+    )
+    held_until = models.DateTimeField(null=True, blank=True)
 
+    def is_hold_expired(self):
+        return (
+            self.status == self.Status.RESERVED
+            and self.held_until is not None
+            and self.held_until <= timezone.now()
+        )
+
+    def is_takeable(self):
+        return self.status == self.Status.AVAILABLE or self.is_hold_expired()
+
+    @property
+    def effective_status(self):
+        return self.Status.AVAILABLE if self.is_hold_expired() else self.status
+    
     class Meta:
         unique_together = ("offering", "seat_number")
 
