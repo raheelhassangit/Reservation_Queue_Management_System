@@ -11,6 +11,9 @@ class Booking(models.Model):
         Offering, on_delete=models.CASCADE, related_name="bookings"
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Booking #{self.id} - {self.customer.username} - {self.offering.name}"
 
 
 class BookingSeat(models.Model):
@@ -18,3 +21,6 @@ class BookingSeat(models.Model):
         Booking, on_delete=models.CASCADE, related_name="booked_seats"
     )
     seat = models.OneToOneField(Seat, on_delete=models.PROTECT, related_name="booking_seat")
+    
+    def __str__(self):
+        return f"{self.booking_id} -> {self.seat}"
