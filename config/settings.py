@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "offerings",
     "bookings",
     "django_celery_beat",
+    "django_filters"
 ]
 
 TAILWIND_APP_NAME = "theme"
