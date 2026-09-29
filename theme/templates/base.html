@@ -2,33 +2,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>{% block title %}Reservation System{% endblock %}</title>
+    <title>{% block title %}ReserveX AI | Reservation Queue{% endblock %}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     {% tailwind_css %}
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: #8c4b42 #f1ece4;
+        }
+
+        ::-webkit-scrollbar {
+            width: 13px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1ece4;
+            border-left: 3px solid #f7f4ef;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #8c4b42;
+            border: 3px solid #f1ece4;
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1b242d;
+        }
+
+        ::selection {
+            background: #d8b46c;
+            color: #17202a;
+        }
+    </style>
+
     {% block extra_head %}{% endblock %}
 </head>
 
-<body class="bg-cream text-gray-900 font-sans leading-normal tracking-normal">
-<nav class="flex justify-between items-center px-6 py-4 bg-white shadow-sm">
-    <a href="/" class="flex items-center gap-2">
-        <img src="{% static 'images/logo.jpg' %}" alt="Logo" class="h-9 w-9 rounded-full object-cover">
-        <span class="font-semibold text-lg text-maroon">Reservation System</span>
-    </a>
-    <span id="nav-auth" class="space-x-4 text-sm"></span>
-</nav>
+<body class="{% block body_class %}min-h-screen bg-[#f7f4ef] font-sans text-[#17202a]{% endblock %}">
+    <nav class="{% block nav_class %}relative z-20 border-b border-[#e2dcd4] bg-[#fffdf9]{% endblock %}">
+        <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
+            <a href="/" class="flex items-center gap-3" aria-label="ReserveX AI home">
+                <img
+                    src="{% static 'images/logo.jpg' %}"
+                    alt="ReserveX AI"
+                    class="h-10 w-10 rounded-full object-cover shadow-sm"
+                >
+                <span class="{% block brand_class %}font-semibold tracking-tight text-[#17202a]{% endblock %}">
+                    ReserveX AI
+                </span>
+            </a>
 
-<main class="container mx-auto px-4 py-8">
-    {% block content %}{% endblock %}
-</main>
+            <div class="hidden items-center gap-7 text-sm md:flex">
+                <a href="/" class="{% block nav_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
+                    Home
+                </a>
+                <a href="/#reservations" class="{% block browse_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
+                    Browse
+                </a>
+                <a href="/#about" class="{% block about_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
+                    About
+                </a>
+                <a href="/login/" class="{% block signin_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
+                    Sign in
+                </a>
+                <a
+                    id="nav-account-link"
+                    href="/register/"
+                    class="{% block account_link_class %}rounded-full bg-[#6d3032] px-4 py-2 font-medium text-white transition hover:-translate-y-0.5 hover:bg-[#4a1f25]{% endblock %}"
+                >
+                    Create account
+                </a>
+            </div>
 
-<script src="{% static 'js/api.js' %}"></script>
-<script>
-    document.getElementById("nav-auth").innerHTML = getAccessToken()
-      ? '<a href="#" onclick="logout()" class="text-maroon hover:underline">Logout</a>'
-      : '<a href="/login/" class="hover:underline">Login</a> <a href="/register/" class="bg-maroon text-white px-4 py-2 rounded hover:bg-maroon-dark">Register</a>';
-</script>
-{% block extra_js %}{% endblock %}
+            <details class="relative md:hidden">
+                <summary class="cursor-pointer list-none rounded-full border px-4 py-2 text-sm font-medium [&::-webkit-details-marker]:hidden {% block mobile_menu_class %}border-[#cfc3b4] text-[#29313a]{% endblock %}">
+                    Menu
+                </summary>
+
+                <div class="absolute right-0 top-12 w-48 rounded-[1.25rem_0.4rem_1.25rem_0.4rem] border border-[#ded6cc] bg-[#fffdf9] p-3 text-sm shadow-[0_18px_40px_rgba(28,35,42,.14)]">
+                    <a href="/" class="block rounded-lg px-3 py-2 hover:bg-[#f2ede5]">Home</a>
+                    <a href="/#reservations" class="block rounded-lg px-3 py-2 hover:bg-[#f2ede5]">Browse</a>
+                    <a href="/#about" class="block rounded-lg px-3 py-2 hover:bg-[#f2ede5]">About</a>
+                    <a href="/login/" class="block rounded-lg px-3 py-2 hover:bg-[#f2ede5]">Sign in</a>
+                    <a href="/register/" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Create account</a>
+                </div>
+            </details>
+        </div>
+    </nav>
+
+    <main class="{% block main_class %}container mx-auto min-h-[60vh] px-4 py-8{% endblock %}">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-[#12181e] text-white/70">
+        <div class="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr] lg:px-10">
+            <div>
+                <a href="/" class="flex items-center gap-3 text-white">
+                    <img src="{% static 'images/logo.jpg' %}" alt="" class="h-9 w-9 rounded-full object-cover">
+                    <span class="font-semibold">ReserveX AI</span>
+                </a>
+                <p class="mt-4 max-w-xs text-sm leading-6">
+                    A clear, dependable way to discover and confirm reservations.
+                </p>
+            </div>
+
+            <div>
+                <h2 class="text-sm font-semibold text-white">Explore</h2>
+                <ul class="mt-4 space-y-3 text-sm">
+                    <li><a href="/#reservations" class="transition hover:text-white">Browse reservations</a></li>
+                    <li><a href="/#about" class="transition hover:text-white">About ReserveX AI</a></li>
+                    <li><a href="/#providers" class="transition hover:text-white">For providers</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-sm font-semibold text-white">Account</h2>
+                <ul class="mt-4 space-y-3 text-sm">
+                    <li><a href="/login/" class="transition hover:text-white">Sign in</a></li>
+                    <li><a href="/register/" class="transition hover:text-white">Create account</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="border-t border-white/10 px-5 py-5 text-center text-xs text-white/45">
+            © {% now "Y" %} ReserveX AI. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="{% static 'js/api.js' %}"></script>
+    <script>
+        const accountLink = document.getElementById("nav-account-link");
+
+        if (accountLink && getAccessToken()) {
+            accountLink.textContent = "Sign out";
+            accountLink.href = "#";
+            accountLink.addEventListener("click", (event) => {
+                event.preventDefault();
+                logout();
+            });
+        }
+    </script>
+
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
