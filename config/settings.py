@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "organizations",
     "offerings",
     "bookings",
+    "django_celery_beat",
 ]
 
 TAILWIND_APP_NAME = "theme"
@@ -168,3 +169,7 @@ EMAIL_BACKEND = config(
     "EMAIL_BACKEND",
     default="django.core.mail.backends.console.EmailBackend",
 )
+
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_TIMEZONE = TIME_ZONE
