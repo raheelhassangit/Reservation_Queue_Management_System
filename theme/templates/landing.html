@@ -1,14 +1,302 @@
 {% extends "base.html" %}
 {% load static %}
+
+{% block title %}ReserveX AI | Reservation Queue{% endblock %}
+{% block body_class %}min-h-screen bg-[#f7f4ef] font-sans text-[#17202a]{% endblock %}
+{% block main_class %}overflow-x-hidden{% endblock %}
+
+{% block nav_class %}absolute inset-x-0 top-0 z-20 border-b border-white/15 bg-transparent text-white{% endblock %}
+{% block brand_class %}font-semibold tracking-tight text-white{% endblock %}
+{% block nav_link_class %}text-white/85 transition hover:text-white{% endblock %}
+{% block browse_link_class %}text-white/85 transition hover:text-white{% endblock %}
+{% block about_link_class %}text-white/85 transition hover:text-white{% endblock %}
+{% block signin_link_class %}text-white/85 transition hover:text-white{% endblock %}
+{% block account_link_class %}rounded-full border border-white/70 px-4 py-2 font-medium text-white transition hover:bg-white hover:text-[#4a1f25]{% endblock %}
+{% block mobile_menu_class %}border-white/50 text-white{% endblock %}
+
 {% block content %}
-<div class="relative rounded-2xl overflow-hidden">
-    <img src="{% static 'images/hero.jpg' %}" alt="" class="w-full h-[420px] object-cover">
-    <div class="absolute inset-0 bg-maroon-dark/60 flex flex-col items-center justify-center text-center px-4">
-        <h1 class="text-4xl font-bold text-white mb-4">Reserve your spot, anywhere.</h1>
-        <p class="text-cream mb-6 max-w-lg">Buses, courses, events, appointments — one platform, real-time availability.</p>
-        <a href="/offerings/" class="bg-gold text-maroon-dark font-semibold px-6 py-3 rounded hover:bg-gold-light">
-            Browse Offerings
-        </a>
+<section class="relative isolate min-h-[670px] overflow-hidden bg-[#2b171c] sm:min-h-[720px]">
+    <img
+        src="{% static 'images/hero.jpg' %}"
+        alt="Travel tickets, an appointment calendar, and event reservations arranged on a table"
+        class="absolute inset-0 -z-20 h-full w-full object-cover object-[58%_center]"
+    >
+
+    <div class="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(19,24,30,.94)_0%,rgba(24,25,29,.78)_38%,rgba(29,21,23,.3)_70%,rgba(16,16,18,.16)_100%)]"></div>
+    <div class="absolute inset-x-0 bottom-0 -z-10 h-52 bg-gradient-to-t from-[#15191e]/65 to-transparent"></div>
+
+    <div class="mx-auto flex min-h-[670px] max-w-7xl items-center px-5 pb-16 pt-32 sm:min-h-[720px] sm:px-8 sm:pt-36 lg:px-10">
+        <div class="max-w-2xl text-white">
+            <p class="mb-6 text-xs font-semibold uppercase tracking-[0.22em] text-[#e6c98c]">
+                Reservation Queue
+            </p>
+
+            <h1 class="max-w-xl text-4xl font-semibold leading-[1.08] tracking-[-0.04em] sm:text-5xl lg:text-[3.7rem]">
+                Reserve your place.<br>
+                Skip the uncertainty.
+            </h1>
+
+            <p class="mt-6 max-w-xl text-base leading-7 text-white/80 sm:text-lg">
+                Discover available reservations, choose the seats or slots that work for you,
+                place a temporary hold, and confirm while they are still available.
+            </p>
+
+            <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+                <a
+                    href="#reservations"
+                    class="group inline-flex items-center justify-center rounded-full bg-[#d8b46c] px-6 py-3 text-sm font-semibold text-[#1b2027] transition duration-300 hover:-translate-y-1 hover:bg-[#ecd295] hover:shadow-[0_12px_28px_rgba(216,180,108,.28)]"
+                >
+                    Explore reservations
+                    <span class="ml-3 grid h-6 w-6 place-items-center rounded-full bg-[#1b2027] text-[#ecd295] transition group-hover:rotate-45">
+                        ↗
+                    </span>
+                </a>
+
+                <a
+                    href="/register/"
+                    class="inline-flex items-center justify-center rounded-full border border-white/65 px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-1 hover:border-white hover:bg-white/10"
+                >
+                    Create account
+                </a>
+            </div>
+
+            <p class="mt-7 text-sm text-white/65">
+                For bus journeys, courses, events, appointments, and more.
+            </p>
+        </div>
     </div>
-</div>
+</section>
+
+<section id="about" class="scroll-mt-8 bg-[#f7f4ef] py-20 sm:py-24">
+    <div class="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[1fr_.9fr] lg:items-center lg:px-10">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#975b3d]">
+                About ReserveX AI
+            </p>
+
+            <h2 class="mt-3 max-w-xl text-3xl font-semibold tracking-[-0.03em] text-[#17202a] sm:text-4xl">
+                A calmer way to manage the moments people plan around.
+            </h2>
+
+            <p class="mt-6 max-w-xl leading-7 text-[#56616a]">
+                ReserveX AI brings reservation availability into one clear experience.
+                Whether someone is catching a bus, joining a course, attending an event,
+                or booking an appointment, the platform makes it easier to see what is open
+                and reserve with confidence.
+            </p>
+
+            <p class="mt-4 max-w-xl leading-7 text-[#56616a]">
+                For providers, it offers a practical way to define capacity, create offerings,
+                and manage the seats they make available.
+            </p>
+
+            <a
+                href="#reservations"
+                class="mt-8 inline-flex items-center gap-3 rounded-full border border-[#6d3032] px-5 py-3 text-sm font-semibold text-[#6d3032] transition hover:bg-[#6d3032] hover:text-white"
+            >
+                Browse current reservations
+                <span class="text-lg leading-none">→</span>
+            </a>
+        </div>
+
+        <div class="relative min-h-[330px]">
+            <div class="absolute left-0 top-0 h-48 w-48 rounded-[45%_55%_52%_48%/42%_42%_58%_58%] bg-[#d8b46c]"></div>
+
+            <div class="absolute right-0 top-8 max-w-xs rounded-[2rem_0.75rem_2rem_0.75rem] bg-[#1b242d] p-8 text-white shadow-[0_20px_50px_rgba(27,36,45,.18)]">
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-[#e6c98c]">
+                    Designed around availability
+                </p>
+                <p class="mt-4 text-xl font-semibold leading-8">
+                    Clear options. Temporary holds. Confident confirmations.
+                </p>
+            </div>
+
+            <div class="absolute bottom-0 left-8 rounded-[0.75rem_2rem_0.75rem_2rem] border border-[#d9d2c8] bg-white px-7 py-6 shadow-sm sm:left-10">
+                <p class="text-sm font-medium text-[#975b3d]">
+                    From planning to confirmation
+                </p>
+                <p class="mt-1 text-sm text-[#56616a]">
+                    Built for real reservation workflows.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="border-y border-[#d9d2c8] bg-[#eee8df] py-16 sm:py-20">
+    <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+        <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#975b3d]">
+                    Built for different kinds of plans
+                </p>
+                <h2 class="mt-3 text-3xl font-semibold tracking-[-0.03em] text-[#17202a] sm:text-4xl">
+                    One dependable reservation queue.
+                </h2>
+            </div>
+
+            <a href="#reservations" class="text-sm font-semibold text-[#6d3032] transition hover:text-[#975b3d]">
+                See current availability →
+            </a>
+        </div>
+
+        <div class="mt-10 flex flex-wrap gap-4">
+            <span class="rounded-[1.5rem_0.5rem_1.5rem_0.5rem] bg-[#6d3032] px-6 py-4 text-lg font-medium text-white shadow-sm">
+                Bus
+            </span>
+            <span class="rounded-full border border-[#cfc3b4] bg-[#fffaf3] px-6 py-4 text-lg font-medium text-[#29313a]">
+                Course
+            </span>
+            <span class="rounded-[0.5rem_1.5rem_0.5rem_1.5rem] bg-[#d8b46c] px-6 py-4 text-lg font-medium text-[#1b2027]">
+                Event
+            </span>
+            <span class="rounded-[1.4rem_1.4rem_0.4rem_1.4rem] border border-[#cfc3b4] bg-[#fffaf3] px-6 py-4 text-lg font-medium text-[#29313a]">
+                Appointment
+            </span>
+            <span class="rounded-[1.4rem_0.4rem_1.4rem_1.4rem] bg-[#1b242d] px-6 py-4 text-lg font-medium text-white">
+                Many More
+            </span>
+        </div>
+    </div>
+</section>
+
+<section id="reservations" class="scroll-mt-8 bg-[#fffdf9] py-20 sm:py-24">
+    <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+        <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+            <div class="max-w-2xl">
+                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#975b3d]">
+                    Live availability
+                </p>
+                <h2 class="mt-3 text-3xl font-semibold tracking-[-0.03em] text-[#17202a] sm:text-4xl">
+                    Explore reservations
+                </h2>
+                <p class="mt-4 leading-7 text-[#56616a]">
+                    Current offerings are shown here as they become available.
+                    Sign in to choose and reserve seats.
+                </p>
+            </div>
+
+            <a href="/login/" class="w-fit text-sm font-semibold text-[#6d3032] transition hover:text-[#975b3d]">
+                Sign in to reserve →
+            </a>
+        </div>
+
+        <div id="offerings-list" class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3" aria-live="polite">
+            <p class="text-sm text-[#56616a]">Loading available reservations…</p>
+        </div>
+    </div>
+</section>
+
+<section id="providers" class="relative overflow-hidden bg-[#1b242d] py-20 text-white sm:py-24">
+    <div class="absolute -right-16 -top-20 h-64 w-64 rounded-full border-[28px] border-[#d8b46c]/15"></div>
+
+    <div class="relative mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 lg:grid-cols-[1.15fr_.85fr] lg:items-end lg:px-10">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#e6c98c]">
+                For organizations
+            </p>
+            <h2 class="mt-3 max-w-xl text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+                Make availability simple for the people you serve.
+            </h2>
+        </div>
+
+        <div>
+            <p class="leading-7 text-white/72">
+                Create reservation offerings, set capacity, and manage the seats you make
+                available—all in one clear queue.
+            </p>
+
+            <a
+                href="/register/"
+                class="group mt-7 inline-flex items-center rounded-full bg-[#d8b46c] px-6 py-3 text-sm font-semibold text-[#1b2027] transition hover:-translate-y-1 hover:bg-[#ecd295]"
+            >
+                Offer a reservation
+                <span class="ml-3 grid h-6 w-6 place-items-center rounded-full bg-[#1b2027] text-[#ecd295] transition group-hover:rotate-45">
+                    ↗
+                </span>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(() => {
+    const list = document.getElementById("offerings-list");
+
+    const escapeHtml = (value) =>
+        String(value ?? "").replace(/[&<>'"]/g, (character) => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "'": "&#39;",
+            '"': "&quot;"
+        })[character]);
+
+    fetch("/api/offerings/", {
+        headers: { Accept: "application/json" }
+    })
+        .then((response) => response.ok ? response.json() : Promise.reject())
+        .then((payload) => {
+            const offerings = Array.isArray(payload) ? payload : (payload.results || []);
+
+            if (!offerings.length) {
+                list.innerHTML = `
+                    <div class="rounded-[1.5rem_0.5rem_1.5rem_0.5rem] border border-[#ddd6cd] bg-[#fdfaf5] p-7 text-sm leading-6 text-[#56616a] md:col-span-2 lg:col-span-3">
+                        There are no public reservations to show yet. Check back soon, or create an account to get started.
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = offerings.map((offering) => `
+                <article class="group relative overflow-hidden rounded-[2rem_0.8rem_2rem_0.8rem] border border-[#ddd6cd] bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-[#b89973] hover:shadow-[0_18px_38px_rgba(34,39,44,.11)]">
+                    <div class="absolute -right-7 -top-7 h-24 w-24 rounded-full bg-[#f3e5cb] transition duration-300 group-hover:scale-125"></div>
+
+                    <div class="relative flex items-start justify-between gap-4">
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[#975b3d]">
+                            ${escapeHtml(offering.category_display)}
+                        </p>
+
+                        <span class="rounded-full bg-[#f3eee7] px-3 py-1 text-xs font-medium text-[#48545d]">
+                            ${escapeHtml(offering.available_seats)} available
+                        </span>
+                    </div>
+
+                    <div class="relative">
+                        <h3 class="mt-8 text-xl font-semibold tracking-[-0.02em] text-[#17202a]">
+                            ${escapeHtml(offering.name)}
+                        </h3>
+
+                        <p class="mt-2 text-sm text-[#56616a]">
+                            ${escapeHtml(offering.organization_name)}
+                        </p>
+
+                        <div class="mt-6 flex items-center justify-between border-t border-[#eee9e2] pt-4 text-sm">
+                            <span class="text-[#56616a]">
+                                Up to ${escapeHtml(offering.max_seats_per_booking)} per booking
+                            </span>
+
+                            <a
+                                href="/login/"
+                                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#6d3032] font-semibold text-white transition hover:rotate-45 hover:bg-[#975b3d]"
+                                aria-label="Sign in to reserve ${escapeHtml(offering.name)}"
+                            >
+                                ↗
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            `).join("");
+        })
+        .catch(() => {
+            list.innerHTML = `
+                <div class="rounded-[1.5rem_0.5rem_1.5rem_0.5rem] border border-[#ddd6cd] bg-[#fdfaf5] p-7 text-sm leading-6 text-[#56616a] md:col-span-2 lg:col-span-3">
+                    Reservations are unavailable right now. Please try again shortly.
+                </div>
+            `;
+        });
+})();
+</script>
 {% endblock %}
