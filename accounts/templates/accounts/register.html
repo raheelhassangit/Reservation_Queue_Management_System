@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="flex bg-white rounded-2xl shadow overflow-hidden max-w-4xl mx-auto">
+    <div class="hidden md:block w-1/2">
+        <img src="{% static 'images/auth.jpg' %}" alt="" class="h-full w-full object-cover">
+    </div>
+    <div class="w-full md:w-1/2 p-8">
+        <h2 class="text-2xl font-semibold text-maroon mb-4">Create your account</h2>
+
+        <div class="flex gap-4 mb-4 text-sm">
+            <label class="flex items-center gap-1">
+                <input type="radio" name="role" value="customer" checked> Customer
+            </label>
+            <label class="flex items-center gap-1">
+                <input type="radio" name="role" value="provider"> Provider
+            </label>
+        </div>
+
+        <form id="register-form" class="space-y-4">
+            <input type="text" id="username" placeholder="Username" required
+                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold">
+            <input type="email" id="email" placeholder="Email" required
+                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold">
+            <input type="password" id="password" placeholder="Password" required
+                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold">
+            <input type="text" id="org_name" placeholder="Organization name" style="display:none"
+                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold">
+            <button type="submit" class="w-full bg-maroon text-white rounded py-2 hover:bg-maroon-dark">
+                Register
+            </button>
+        </form>
+        <p id="error" class="text-red-600 text-sm mt-2"></p>
+        <p class="text-sm text-gray-500 mt-4">Already have an account? <a href="/login/" class="text-maroon font-medium hover:underline">Login</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const orgField = document.getElementById("org_name");
+document.querySelectorAll('input[name="role"]').forEach(r =>
+  r.addEventListener("change", (e) => {
+    orgField.style.display = e.target.value === "provider" ? "block" : "none";
+  })
+);
+
+document.getElementById("register-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const role = document.querySelector('input[name="role"]:checked').value;
+  const payload = {
+    username: document.getElementById("username").value,
+    email: document.getElementById("email").value,
+    password: document.getElementById("password").value,
+  };
+  if (role === "provider") payload.organization_name = orgField.value;
+
+  const res = await fetch(`${API_BASE}/accounts/register/${role}/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (res.ok) {
+    window.location.href = "/login/";
+  } else {
+    document.getElementById("error").textContent = JSON.stringify(await res.json());
+  }
+});
+</script>
+{% endblock %}
