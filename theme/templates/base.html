@@ -2,18 +2,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Django Tailwind</title>
+    <title>{% block title %}Reservation System{% endblock %}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     {% tailwind_css %}
+    {% block extra_head %}{% endblock %}
 </head>
 
-<body class="bg-gray-50 text-black font-serif leading-normal tracking-normal">
-<div class="container mx-auto">
-    <section class="flex items-center justify-center h-screen">
-        <h1 class="text-5xl">Django + Tailwind = ❤️</h1>
-    </section>
-</div>
+<body class="bg-cream text-gray-900 font-sans leading-normal tracking-normal">
+<nav class="flex justify-between items-center px-6 py-4 bg-white shadow-sm">
+    <a href="/" class="flex items-center gap-2">
+        <img src="{% static 'images/logo.jpg' %}" alt="Logo" class="h-9 w-9 rounded-full object-cover">
+        <span class="font-semibold text-lg text-maroon">Reservation System</span>
+    </a>
+    <span id="nav-auth" class="space-x-4 text-sm"></span>
+</nav>
+
+<main class="container mx-auto px-4 py-8">
+    {% block content %}{% endblock %}
+</main>
+
+<script src="{% static 'js/api.js' %}"></script>
+<script>
+    document.getElementById("nav-auth").innerHTML = getAccessToken()
+      ? '<a href="#" onclick="logout()" class="text-maroon hover:underline">Logout</a>'
+      : '<a href="/login/" class="hover:underline">Login</a> <a href="/register/" class="bg-maroon text-white px-4 py-2 rounded hover:bg-maroon-dark">Register</a>';
+</script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>
