@@ -7,11 +7,24 @@ from .serializers import (
     OfferingDetailSerializer,
 )
 from django.utils import timezone
+from rest_framework import filters
+from .filters import OfferingFilter
+from .permissions import IsProvider, IsOfferingOwner
+from .serializers import OfferingUpdateSerializer
+
 
 class IsProvider(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role == "provider"
 
+class OfferingListCreateView(generics.ListCreateAPIView):
+    filterset_class = OfferingFilter
+    search_fields = ["name", "organization__name"]
+    ordering_fields = ["total_seats", "created_at", "available_count"]
+    ordering = ["-created_at"]  # default order
+
+    def get_queryset(self):
+        return offerings_queryset()
 
 def offerings_queryset():
     now = timezone.now()
@@ -45,3 +58,18 @@ class OfferingDetailView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         return offerings_queryset().prefetch_related("seats")
+
+
+class OfferingDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = OfferingDetailSerializer
+    queryset = offerings_queryset().prefetch_related("seats")
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [permissions.AllowAny()]
+        return [IsProvider(), IsOfferingOwner()]
+
+    def get_serializer_class(self):
+        if self.request.method in ("PUT", "PATCH"):
+            return OfferingUpdateSerializer
+        return OfferingDetailSerializer        

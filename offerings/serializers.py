@@ -55,3 +55,17 @@ class OfferingDetailSerializer(OfferingListSerializer):
 
     class Meta(OfferingListSerializer.Meta):
         fields = OfferingListSerializer.Meta.fields + ["seats"]    
+        
+class OfferingUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Offering
+        fields = ["name", "category", "custom_category", "max_seats_per_booking"]
+
+    def validate(self, data):
+        category = data.get("category", getattr(self.instance, "category", None))
+        custom = data.get("custom_category", getattr(self.instance, "custom_category", ""))
+        if category == Offering.Category.OTHER and not custom:
+            raise serializers.ValidationError(
+                {"custom_category": "This field is required when category is 'other'."}
+            )
+        return data        
