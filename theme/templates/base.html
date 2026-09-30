@@ -13,30 +13,11 @@
             scrollbar-width: thin;
             scrollbar-color: #8c4b42 #f1ece4;
         }
-
-        ::-webkit-scrollbar {
-            width: 13px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1ece4;
-            border-left: 3px solid #f7f4ef;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #8c4b42;
-            border: 3px solid #f1ece4;
-            border-radius: 999px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #1b242d;
-        }
-
-        ::selection {
-            background: #d8b46c;
-            color: #17202a;
-        }
+        ::-webkit-scrollbar { width: 13px; }
+        ::-webkit-scrollbar-track { background: #f1ece4; border-left: 3px solid #f7f4ef; }
+        ::-webkit-scrollbar-thumb { background: #8c4b42; border: 3px solid #f1ece4; border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #1b242d; }
+        ::selection { background: #d8b46c; color: #17202a; }
     </style>
 
     {% block extra_head %}{% endblock %}
@@ -66,15 +47,23 @@
                 <a href="/#about" class="{% block about_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
                     About
                 </a>
-                <a href="/login/" class="{% block signin_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
+
+                <a href="/login/" data-guest-only
+                   class="{% block signin_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
                     Sign in
                 </a>
-                <a
-                    id="nav-account-link"
-                    href="/register/"
-                    class="{% block account_link_class %}rounded-full bg-[#6d3032] px-4 py-2 font-medium text-white transition hover:-translate-y-0.5 hover:bg-[#4a1f25]{% endblock %}"
-                >
+                <a href="/register/" data-guest-only
+                   class="{% block account_link_class %}rounded-full bg-[#6d3032] px-4 py-2 font-medium text-white transition hover:-translate-y-0.5 hover:bg-[#4a1f25]{% endblock %}">
                     Create account
+                </a>
+
+                <a id="nav-role-link" href="#" data-auth-only style="display:none"
+                   class="{% block dashboard_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
+                    Dashboard
+                </a>
+                <a id="nav-logout-link" href="#" data-auth-only style="display:none"
+                   class="{% block logout_link_class %}rounded-full bg-[#6d3032] px-4 py-2 font-medium text-white transition hover:-translate-y-0.5 hover:bg-[#4a1f25]{% endblock %}">
+                    Sign out
                 </a>
             </div>
 
@@ -87,8 +76,14 @@
                     <a href="/" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Home</a>
                     <a href="/#reservations" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Browse</a>
                     <a href="/#about" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">About</a>
-                    <a href="/login/" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Sign in</a>
-                    <a href="/register/" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Create account</a>
+
+                    <a href="/login/" data-guest-only class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Sign in</a>
+                    <a href="/register/" data-guest-only class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Create account</a>
+
+                    <a id="nav-role-link-mobile" href="#" data-auth-only style="display:none"
+                       class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Dashboard</a>
+                    <a id="nav-logout-link-mobile" href="#" data-auth-only style="display:none"
+                       class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Sign out</a>
                 </div>
             </details>
         </div>
@@ -122,8 +117,10 @@
             <div>
                 <h2 class="text-sm font-semibold text-white">Account</h2>
                 <ul class="mt-4 space-y-3 text-sm">
-                    <li><a href="/login/" class="transition hover:text-white">Sign in</a></li>
-                    <li><a href="/register/" class="transition hover:text-white">Create account</a></li>
+                    <li data-guest-only><a href="/login/" class="transition hover:text-white">Sign in</a></li>
+                    <li data-guest-only><a href="/register/" class="transition hover:text-white">Create account</a></li>
+                    <li data-auth-only style="display:none"><a href="#" id="footer-role-link" class="transition hover:text-white">Dashboard</a></li>
+                    <li data-auth-only style="display:none"><a href="#" id="footer-logout-link" class="transition hover:text-white">Sign out</a></li>
                 </ul>
             </div>
         </div>
@@ -135,16 +132,50 @@
 
     <script src="{% static 'js/api.js' %}"></script>
     <script>
-        const accountLink = document.getElementById("nav-account-link");
+        async function updateNavForAuth() {
+            const loggedIn = !!getAccessToken();
 
-        if (accountLink && getAccessToken()) {
-            accountLink.textContent = "Sign out";
-            accountLink.href = "#";
-            accountLink.addEventListener("click", (event) => {
-                event.preventDefault();
-                logout();
+            document.querySelectorAll('[data-guest-only]').forEach(el => {
+                el.style.display = loggedIn ? "none" : "";
+            });
+            document.querySelectorAll('[data-auth-only]').forEach(el => {
+                el.style.display = loggedIn ? "" : "none";
+            });
+
+            if (!loggedIn) return;
+
+            let role = "customer";
+            try {
+                const res = await apiFetch("/accounts/me/");
+                if (res.ok) {
+                    const user = await res.json();
+                    role = user.role;
+                }
+            } catch (e) {
+                return;
+            }
+
+            const dashboardHref = role === "provider" ? "/offerings/dashboard/" : "/bookings/mine/";
+            const dashboardLabel = role === "provider" ? "Dashboard" : "My Bookings";
+
+            [
+                ["nav-role-link", dashboardHref, dashboardLabel],
+                ["nav-role-link-mobile", dashboardHref, dashboardLabel],
+                ["footer-role-link", dashboardHref, dashboardLabel],
+            ].forEach(([id, href, label]) => {
+                const el = document.getElementById(id);
+                if (el) { el.href = href; el.textContent = label; }
+            });
+
+            [
+                "nav-logout-link", "nav-logout-link-mobile", "footer-logout-link",
+            ].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener("click", (e) => { e.preventDefault(); logout(); });
             });
         }
+
+        updateNavForAuth();
     </script>
 
     {% block extra_js %}{% endblock %}

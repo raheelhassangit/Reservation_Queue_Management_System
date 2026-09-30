@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Manage Offering | ReserveX AI{% endblock %}
+
+{% block extra_head %}
+<style>
+    .provider-form input[type="number"] {
+        appearance: textfield;
+        -moz-appearance: textfield;
+    }
+
+    .provider-form input[type="number"]::-webkit-inner-spin-button,
+    .provider-form input[type="number"]::-webkit-outer-spin-button {
+        appearance: none;
+        margin: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-6xl py-4 sm:py-8">
+    <div class="relative overflow-hidden rounded-[2rem_.75rem_2rem_.75rem] bg-[#1b242d] px-7 py-10 text-white sm:px-10">
+        <div class="absolute -right-12 -top-16 h-56 w-56 rounded-full border-[28px] border-[#d8b46c]/20"></div>
+        <div class="absolute bottom-0 left-[42%] h-24 w-24 rounded-[45%_55%_52%_48%/42%_42%_58%_58%] bg-[#6d3032]/60"></div>
+
+        <div class="relative max-w-2xl">
+            <p class="text-xs font-semibold uppercase tracking-[.2em] text-[#e6c98c]">Provider workspace</p>
+            <h1 id="page-heading" class="mt-3 text-3xl font-semibold tracking-[-.03em] sm:text-4xl">
+                Create a reservation offering
+            </h1>
+            <p id="page-description" class="mt-4 max-w-xl leading-7 text-white/72">
+                Set the details customers need to find, choose, and reserve available seats.
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_290px]">
+        <form id="offering-form" class="provider-form rounded-[1.75rem_.6rem_1.75rem_.6rem] border border-[#d9d2c8] bg-white p-6 shadow-sm sm:p-8">
+            <div class="flex items-center justify-between border-b border-[#eee9e2] pb-5">
+                <div>
+                    <p class="text-sm font-semibold text-[#17202a]">Offering details</p>
+                    <p class="mt-1 text-sm text-[#56616a]">Keep names clear and easy to recognize.</p>
+                </div>
+
+                <span id="form-mode" class="rounded-full bg-[#f3eee7] px-3 py-1 text-xs font-semibold text-[#975b3d]">
+                    New offering
+                </span>
+            </div>
+
+            <div class="mt-7 space-y-5">
+                <div>
+                    <label for="name" class="mb-1.5 block text-sm font-medium text-[#29313a]">
+                        Offering name
+                    </label>
+                    <input
+                        id="name"
+                        type="text"
+                        required
+                        placeholder="e.g. Lahore Express, CS-101, Hall A"
+                        class="w-full rounded-xl border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35"
+                    >
+                </div>
+
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-[#29313a]">
+                            Reservation category
+                        </label>
+
+                        <input id="category" type="hidden" value="bus">
+
+                        <div class="relative" id="category-dropdown">
+                            <button
+                                id="category-trigger"
+                                type="button"
+                                aria-expanded="false"
+                                aria-controls="category-options"
+                                class="flex w-full items-center justify-between rounded-[1rem_.4rem_1rem_.4rem] border border-[#d9d2c8] bg-[#fffdf9] px-4 py-3 text-left text-sm font-medium text-[#29313a] outline-none transition hover:border-[#b89973] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35"
+                            >
+                                <span id="category-label">Bus travel</span>
+                                <span class="grid h-7 w-7 place-items-center rounded-full bg-[#eee8df] text-[#6d3032]">↓</span>
+                            </button>
+
+                            <div
+                                id="category-options"
+                                class="absolute z-30 mt-2 hidden w-full overflow-hidden rounded-[.75rem_1.25rem_.75rem_1.25rem] border border-[#d9d2c8] bg-white p-2 shadow-[0_16px_35px_rgba(27,36,45,.14)]"
+                            >
+                                <button type="button" data-value="bus" data-label="Bus travel" class="category-option w-full rounded-lg bg-[#f5eee4] px-3 py-2.5 text-left text-sm font-medium text-[#6d3032]">
+                                    Bus travel
+                                </button>
+                                <button type="button" data-value="course" data-label="Course registration" class="category-option mt-1 w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#29313a] hover:bg-[#f5eee4]">
+                                    Course registration
+                                </button>
+                                <button type="button" data-value="event" data-label="Event booking" class="category-option mt-1 w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#29313a] hover:bg-[#f5eee4]">
+                                    Event booking
+                                </button>
+                                <button type="button" data-value="appointment" data-label="Appointment" class="category-option mt-1 w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#29313a] hover:bg-[#f5eee4]">
+                                    Appointment
+                                </button>
+                                <button type="button" data-value="other" data-label="Other reservation" class="category-option mt-1 w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#29313a] hover:bg-[#f5eee4]">
+                                    Other reservation
+                                </button>
+                            </div>
+                        </div>
+
+                        <p class="mt-1.5 text-xs text-[#56616a]">
+                            Choose the type that best describes this offering.
+                        </p>
+                    </div>
+
+                    <div id="custom-category-wrap" class="hidden">
+                        <label for="custom_category" class="mb-1.5 block text-sm font-medium text-[#29313a]">
+                            Custom category
+                        </label>
+                        <input
+                            id="custom_category"
+                            type="text"
+                            placeholder="e.g. Consultation"
+                            class="w-full rounded-[.4rem_1rem_.4rem_1rem] border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35"
+                        >
+                        <p class="mt-1.5 text-xs text-[#56616a]">
+                            Use a short, recognizable category name.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <div>
+                        <label for="total_seats" class="mb-1.5 block text-sm font-medium text-[#29313a]">
+                            Total seats or slots
+                        </label>
+                        <input
+                            id="total_seats"
+                            type="number"
+                            min="1"
+                            required
+                            inputmode="numeric"
+                            placeholder="e.g. 40"
+                            class="w-full rounded-[1rem_.4rem_1rem_.4rem] border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35"
+                        >
+                        <p id="total-seats-note" class="mt-1.5 text-xs text-[#56616a]">
+                            Set the total availability for this offering.
+                        </p>
+                    </div>
+
+                    <div>
+                        <label for="max_seats_per_booking" class="mb-1.5 block text-sm font-medium text-[#29313a]">
+                            Maximum per booking
+                        </label>
+                        <input
+                            id="max_seats_per_booking"
+                            type="number"
+                            min="1"
+                            required
+                            value="1"
+                            inputmode="numeric"
+                            class="w-full rounded-[.4rem_1rem_.4rem_1rem] border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35"
+                        >
+                        <p class="mt-1.5 text-xs text-[#56616a]">
+                            For example, allow up to 4 seats for a group booking.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <p id="error" class="hidden mt-6 rounded-xl bg-[#f8eeee] px-4 py-3 text-sm text-[#8d3034]" aria-live="polite"></p>
+
+            <div class="mt-8 flex flex-col-reverse gap-3 border-t border-[#eee9e2] pt-6 sm:flex-row sm:justify-end">
+                <a
+                    href="/offerings/dashboard/"
+                    class="rounded-full border border-[#d9d2c8] px-5 py-3 text-center text-sm font-semibold text-[#29313a] transition hover:bg-[#f2ede5]"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    id="submit-btn"
+                    type="submit"
+                    class="group inline-flex items-center justify-center rounded-full bg-[#6d3032] px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#4a1f25] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                    <span id="submit-text">Create offering</span>
+                    <span class="ml-3 grid h-6 w-6 place-items-center rounded-full bg-[#d8b46c] text-[#17202a] transition group-hover:rotate-45">
+                        ↗
+                    </span>
+                </button>
+            </div>
+        </form>
+
+        <aside class="h-fit rounded-[.6rem_1.75rem_.6rem_1.75rem] border border-[#d9d2c8] bg-[#f5eee4] p-6">
+            <p class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">Before publishing</p>
+
+            <div class="mt-6 space-y-5 text-sm leading-6 text-[#56616a]">
+                <div>
+                    <p class="font-semibold text-[#17202a]">Use a recognizable name</p>
+                    <p class="mt-1">Customers should know what they are reserving at a glance.</p>
+                </div>
+
+                <div>
+                    <p class="font-semibold text-[#17202a]">Set capacity carefully</p>
+                    <p class="mt-1">Total seats create the reservable places for this offering.</p>
+                </div>
+
+                <div>
+                    <p class="font-semibold text-[#17202a]">Choose a practical limit</p>
+                    <p class="mt-1">This controls how many seats one customer may reserve at once.</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const match = window.location.pathname.match(/\/offerings\/(\d+)\/edit\/?$/);
+const offeringId = match?.[1];
+const isEdit = Boolean(offeringId);
+
+const form = document.getElementById("offering-form");
+const category = document.getElementById("category");
+const categoryTrigger = document.getElementById("category-trigger");
+const categoryLabel = document.getElementById("category-label");
+const categoryOptions = document.getElementById("category-options");
+const categoryDropdown = document.getElementById("category-dropdown");
+const customWrap = document.getElementById("custom-category-wrap");
+const customInput = document.getElementById("custom_category");
+const totalSeats = document.getElementById("total_seats");
+const errorBox = document.getElementById("error");
+const submitButton = document.getElementById("submit-btn");
+
+function showError(message) {
+    errorBox.textContent = message;
+    errorBox.classList.remove("hidden");
+}
+
+function toggleCustomCategory() {
+    const isOther = category.value === "other";
+    customWrap.classList.toggle("hidden", !isOther);
+    customInput.required = isOther;
+
+    if (!isOther) customInput.value = "";
+}
+
+function chooseCategory(value, label) {
+    category.value = value;
+    categoryLabel.textContent = label;
+    categoryOptions.classList.add("hidden");
+    categoryTrigger.setAttribute("aria-expanded", "false");
+
+    document.querySelectorAll(".category-option").forEach((option) => {
+        const selected = option.dataset.value === value;
+        option.classList.toggle("bg-[#f5eee4]", selected);
+        option.classList.toggle("text-[#6d3032]", selected);
+        option.classList.toggle("font-medium", selected);
+    });
+
+    toggleCustomCategory();
+}
+
+function formatError(data) {
+    if (typeof data === "string") return data;
+
+    return Object.entries(data)
+        .map(([field, messages]) => {
+            const text = Array.isArray(messages) ? messages.join(", ") : messages;
+            return `${field}: ${text}`;
+        })
+        .join(" • ");
+}
+
+function setEditCategory(offering) {
+    const knownCategories = ["bus", "course", "event", "appointment"];
+    const rawCategory = String(offering.category || "").toLowerCase();
+    const displayCategory = String(offering.category_display || "").toLowerCase();
+
+    const matched = knownCategories.find(
+        item => item === rawCategory || item === displayCategory
+    );
+
+    const option = document.querySelector(`[data-value="${matched || "other"}"]`);
+
+    chooseCategory(
+        matched || "other",
+        option?.dataset.label || "Other reservation"
+    );
+
+    if (!matched) {
+        customInput.value = offering.category_display || "";
+    }
+}
+
+categoryTrigger.addEventListener("click", () => {
+    const isOpen = !categoryOptions.classList.contains("hidden");
+
+    categoryOptions.classList.toggle("hidden", isOpen);
+    categoryTrigger.setAttribute("aria-expanded", String(!isOpen));
+});
+
+document.querySelectorAll(".category-option").forEach((option) => {
+    option.addEventListener("click", () => {
+        chooseCategory(option.dataset.value, option.dataset.label);
+    });
+});
+
+document.addEventListener("click", (event) => {
+    if (!categoryDropdown.contains(event.target)) {
+        categoryOptions.classList.add("hidden");
+        categoryTrigger.setAttribute("aria-expanded", "false");
+    }
+});
+
+async function loadOffering() {
+    const accountResponse = await apiFetch("/accounts/me/");
+
+    if (!accountResponse.ok) {
+        window.location.href = "/login/";
+        return;
+    }
+
+    const user = await accountResponse.json();
+
+    if (user.role !== "provider") {
+        window.location.href = "/";
+        return;
+    }
+
+    if (!isEdit) return;
+
+    document.title = "Edit Offering | ReserveX AI";
+    document.getElementById("page-heading").textContent = "Edit reservation offering";
+    document.getElementById("page-description").textContent = "Update the customer-facing details for this offering.";
+    document.getElementById("form-mode").textContent = "Editing";
+    document.getElementById("submit-text").textContent = "Save changes";
+
+    totalSeats.disabled = true;
+    totalSeats.required = false;
+    totalSeats.classList.add("cursor-not-allowed", "bg-[#f2ede5]", "text-[#899198]");
+    document.getElementById("total-seats-note").textContent = "Seat count cannot be changed after creation.";
+
+    const response = await apiFetch(`/offerings/${offeringId}/`);
+
+    if (!response.ok) {
+        window.location.href = "/offerings/dashboard/";
+        return;
+    }
+
+    const offering = await response.json();
+
+    document.getElementById("name").value = offering.name || "";
+    totalSeats.value = offering.total_seats || "";
+    document.getElementById("max_seats_per_booking").value = offering.max_seats_per_booking || 1;
+
+    setEditCategory(offering);
+}
+
+form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    errorBox.classList.add("hidden");
+
+    const payload = {
+        name: document.getElementById("name").value.trim(),
+        category: category.value,
+        custom_category: category.value === "other" ? customInput.value.trim() : "",
+        max_seats_per_booking: Number(document.getElementById("max_seats_per_booking").value)
+    };
+
+    if (!isEdit) {
+        payload.total_seats = Number(totalSeats.value);
+    }
+
+    submitButton.disabled = true;
+
+    try {
+        const response = await apiFetch(
+            isEdit ? `/offerings/${offeringId}/` : "/offerings/",
+            {
+                method: isEdit ? "PATCH" : "POST",
+                body: JSON.stringify(payload)
+            }
+        );
+
+        if (response.ok) {
+            window.location.href = "/offerings/dashboard/";
+            return;
+        }
+
+        showError(formatError(await response.json()));
+    } catch {
+        showError("Unable to save this offering. Please try again.");
+    } finally {
+        submitButton.disabled = false;
+    }
+});
+
+toggleCustomCategory();
+loadOffering();
+</script>
+{% endblock %}

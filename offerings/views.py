@@ -73,3 +73,23 @@ class OfferingDetailView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method in ("PUT", "PATCH"):
             return OfferingUpdateSerializer
         return OfferingDetailSerializer        
+
+class MyOfferingsView(generics.ListAPIView):
+    serializer_class = OfferingListSerializer
+    permission_classes = [IsProvider]
+    filterset_class = OfferingFilter
+    search_fields = ["name"]
+    ordering_fields = ["total_seats", "created_at", "available_count"]
+    ordering = ["-created_at"]
+
+    def get_queryset(self):
+        now = timezone.now()
+        return Offering.objects.filter(
+            organization=self.request.user.organization
+        ).annotate(
+            available_count=Count(
+                "seats",
+                filter=Q(seats__status="available")
+                | Q(seats__status="reserved", seats__held_until__lte=now),
+            )
+        )    

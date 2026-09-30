@@ -94,7 +94,7 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
 
     if (response.ok) {
         saveTokens(await response.json());
-        window.location.href = "/#reservations";
+        window.location.href = "/";
         return;
     }
 
