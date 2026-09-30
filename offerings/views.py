@@ -17,14 +17,6 @@ class IsProvider(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role == "provider"
 
-class OfferingListCreateView(generics.ListCreateAPIView):
-    filterset_class = OfferingFilter
-    search_fields = ["name", "organization__name"]
-    ordering_fields = ["total_seats", "created_at", "available_count"]
-    ordering = ["-created_at"]  # default order
-
-    def get_queryset(self):
-        return offerings_queryset()
 
 def offerings_queryset():
     now = timezone.now()
@@ -38,6 +30,11 @@ def offerings_queryset():
 
 
 class OfferingListCreateView(generics.ListCreateAPIView):
+    filterset_class = OfferingFilter
+    search_fields = ["name", "organization__name"]
+    ordering_fields = ["total_seats", "created_at", "available_count"]
+    ordering = ["-created_at"]
+
     def get_queryset(self):
         return offerings_queryset()
 
