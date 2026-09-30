@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Offering | ReserveX AI{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-4xl">
+    <div id="offering-header" class="mb-8"></div>
+
+    <div class="rounded-[1.5rem_.5rem_1.5rem_.5rem] border border-[#d9d2c8] bg-white p-7">
+        <div class="flex items-center justify-between mb-5">
+            <h2 class="text-lg font-semibold text-[#17202a]">Select your seats</h2>
+            <div class="flex items-center gap-4 text-xs text-[#56616a]">
+                <span class="flex items-center gap-1"><span class="h-3 w-3 rounded bg-[#eee8df] border border-[#d9d2c8]"></span> Available</span>
+                <span class="flex items-center gap-1"><span class="h-3 w-3 rounded bg-[#6d3032]"></span> Selected</span>
+                <span class="flex items-center gap-1"><span class="h-3 w-3 rounded bg-[#c3bcb2]"></span> Unavailable</span>
+            </div>
+        </div>
+
+        <div id="seat-grid" class="grid grid-cols-6 sm:grid-cols-8 gap-2"></div>
+
+        <div id="booking-bar" class="hidden mt-7 flex items-center justify-between border-t border-[#eee9e2] pt-5">
+            <p class="text-sm text-[#56616a]">
+                Selected: <span id="selected-count" class="font-semibold text-[#17202a]">0</span>
+                / <span id="max-per-booking"></span>
+            </p>
+            <button id="hold-btn"
+                class="rounded-full bg-[#6d3032] px-6 py-3 text-sm font-semibold text-white hover:bg-[#4a1f25] disabled:opacity-50 disabled:cursor-not-allowed">
+                Hold Selected Seats
+            </button>
+        </div>
+
+        <p id="error" class="hidden mt-4 rounded-xl bg-[#f8eeee] px-4 py-3 text-sm text-[#8d3034]"></p>
+    </div>
+</div>
+
+<div id="confirm-bar" class="hidden fixed inset-x-0 bottom-0 z-40 border-t border-[#d9d2c8] bg-white px-4 py-4 shadow-[0_-8px_24px_rgba(27,36,45,.1)]">
+    <div class="mx-auto flex max-w-4xl items-center justify-between gap-4 flex-wrap">
+        <p class="text-sm text-[#29313a]">
+            Seats held — confirm within <span id="hold-timer" class="font-semibold text-[#6d3032]">5:00</span> or they'll be released.
+        </p>
+        <button id="confirm-btn" class="rounded-full bg-[#6d3032] px-6 py-3 text-sm font-semibold text-white hover:bg-[#4a1f25]">
+            Confirm Booking
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const offeringId = window.location.pathname.split("/").filter(Boolean).pop();
+
+let offering = null;
+let selectedSeats = new Set();
+let heldSeats = [];
+let holdInterval = null;
+
+function renderHeader() {
+    document.getElementById("offering-header").innerHTML = `
+        <span class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">${offering.category_display}</span>
+        <h1 class="mt-1 text-3xl font-semibold text-[#17202a]">${offering.name}</h1>
+        <p class="mt-1 text-sm text-[#56616a]">${offering.organization_name}</p>
+        <p class="mt-2 text-sm text-[#56616a]">${offering.available_seats} / ${offering.total_seats} seats available</p>
+    `;
+    document.getElementById("max-per-booking").textContent = offering.max_seats_per_booking;
+}
+
+function seatClasses(status, isSelected) {
+    if (isSelected) return "bg-[#6d3032] text-white border-[#6d3032]";
+    if (status === "available") return "bg-[#eee8df] text-[#29313a] border-[#d9d2c8] hover:border-[#975b3d] cursor-pointer";
+    return "bg-[#c3bcb2] text-white/70 border-[#c3bcb2] cursor-not-allowed";
+}
+
+function renderSeats() {
+    document.getElementById("seat-grid").innerHTML = offering.seats.map(s => `
+        <button type="button" data-seat-id="${s.id}" ${s.status !== "available" ? "disabled" : ""}
+            class="h-10 rounded-lg border text-xs font-semibold transition ${seatClasses(s.status, selectedSeats.has(s.id))}">
+            ${s.seat_number}
+        </button>
+    `).join("");
+
+    document.querySelectorAll("#seat-grid button:not([disabled])").forEach(btn => {
+        btn.addEventListener("click", () => toggleSeat(parseInt(btn.dataset.seatId, 10)));
+    });
+
+    updateBookingBar();
+}
+
+function toggleSeat(seatId) {
+    if (selectedSeats.has(seatId)) {
+        selectedSeats.delete(seatId);
+    } else {
+        if (selectedSeats.size >= offering.max_seats_per_booking) {
+            showError(`You can select at most ${offering.max_seats_per_booking} seat(s).`);
+            return;
+        }
+        selectedSeats.add(seatId);
+    }
+    hideError();
+    renderSeats();
+}
+
+function updateBookingBar() {
+    const bar = document.getElementById("booking-bar");
+    bar.classList.toggle("hidden", selectedSeats.size === 0);
+    document.getElementById("selected-count").textContent = selectedSeats.size;
+}
+
+function showError(msg) {
+    const el = document.getElementById("error");
+    el.textContent = msg;
+    el.classList.remove("hidden");
+}
+function hideError() {
+    document.getElementById("error").classList.add("hidden");
+}
+
+async function loadOffering() {
+    const res = await fetch(`${API_BASE}/offerings/${offeringId}/`);
+    if (!res.ok) { window.location.href = "/offerings/"; return; }
+    offering = await res.json();
+    renderHeader();
+    renderSeats();
+}
+
+document.getElementById("hold-btn").addEventListener("click", async () => {
+    if (!getAccessToken()) { window.location.href = "/login/"; return; }
+    hideError();
+
+    const res = await apiFetch("/bookings/hold/", {
+        method: "POST",
+        body: JSON.stringify({ offering: parseInt(offeringId, 10), seat_ids: Array.from(selectedSeats) }),
+    });
+
+    if (!res.ok) {
+        const data = await res.json();
+        showError(data.detail || JSON.stringify(data));
+        await loadOffering(); // refresh seat states in case someone else took one
+        selectedSeats.clear();
+        return;
+    }
+
+    const data = await res.json();
+    heldSeats = data.seat_ids;
+    startHoldTimer(new Date(data.held_until));
+    document.getElementById("booking-bar").classList.add("hidden");
+    document.getElementById("confirm-bar").classList.remove("hidden");
+});
+
+function startHoldTimer(heldUntil) {
+    clearInterval(holdInterval);
+    holdInterval = setInterval(() => {
+        const secondsLeft = Math.max(0, Math.floor((heldUntil - new Date()) / 1000));
+        const m = Math.floor(secondsLeft / 60);
+        const s = secondsLeft % 60;
+        document.getElementById("hold-timer").textContent = `${m}:${s.toString().padStart(2, "0")}`;
+
+        if (secondsLeft <= 0) {
+            clearInterval(holdInterval);
+            document.getElementById("confirm-bar").classList.add("hidden");
+            showError("Your hold expired. Please select seats again.");
+            selectedSeats.clear();
+            heldSeats = [];
+            loadOffering();
+        }
+    }, 1000);
+}
+
+document.getElementById("confirm-btn").addEventListener("click", async () => {
+    const res = await apiFetch("/bookings/confirm/", {
+        method: "POST",
+        body: JSON.stringify({ offering: parseInt(offeringId, 10), seat_ids: heldSeats }),
+    });
+
+    if (res.ok) {
+        window.location.href = "/bookings/mine/";
+    } else {
+        const data = await res.json();
+        showError(data.detail || JSON.stringify(data));
+        clearInterval(holdInterval);
+        document.getElementById("confirm-bar").classList.add("hidden");
+        selectedSeats.clear();
+        heldSeats = [];
+        loadOffering();
+    }
+});
+
+loadOffering();
+</script>
+{% endblock %}
