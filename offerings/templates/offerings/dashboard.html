@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Dashboard | ReserveX AI{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-6xl">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">Provider Dashboard</p>
+            <h1 class="mt-1 text-3xl font-semibold text-[#17202a]">Your Offerings</h1>
+        </div>
+        <a href="/offerings/create/" class="rounded-full bg-[#6d3032] px-5 py-3 text-sm font-semibold text-white hover:bg-[#4a1f25]">
+            + Create Offering
+        </a>
+    </div>
+
+    <div id="stats" class="grid grid-cols-3 gap-4 mb-8"></div>
+    <div id="offering-list" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
+    <p id="empty" class="hidden text-center text-[#56616a] py-16">No offerings yet — create your first one.</p>
+</div>
+
+<div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#1b242d]/60 backdrop-blur-sm px-4">
+    <div class="w-full max-w-sm rounded-[1.5rem_.5rem_1.5rem_.5rem] bg-white p-7 shadow-[0_20px_50px_rgba(27,36,45,.25)]">
+        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#f8eeee]">
+            <span class="text-2xl text-[#8d3034]">!</span>
+        </div>
+        <h3 class="mt-4 text-center text-lg font-semibold text-[#17202a]">Delete this offering?</h3>
+        <p id="delete-modal-text" class="mt-2 text-center text-sm text-[#56616a]">
+            This cannot be undone. All seats and bookings tied to it will remain in your records, but this offering will no longer be visible to customers.
+        </p>
+        <div class="mt-6 flex gap-3">
+            <button id="delete-cancel-btn" type="button"
+                class="flex-1 rounded-full border border-[#d9d2c8] px-4 py-2.5 text-sm font-semibold text-[#29313a] hover:bg-[#f2ede5]">
+                Cancel
+            </button>
+            <button id="delete-confirm-btn" type="button"
+                class="flex-1 rounded-full bg-[#8d3034] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#6d2226]">
+                Delete
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function guardProvider() {
+    const res = await apiFetch("/accounts/me/");
+    if (!res.ok) return null;
+    const user = await res.json();
+    if (user.role !== "provider") { window.location.href = "/"; return null; }
+    return user;
+}
+
+function offeringCard(o) {
+    return `
+    <div class="rounded-[1.5rem_.5rem_1.5rem_.5rem] border border-[#d9d2c8] bg-white p-6">
+        <span class="text-xs font-semibold uppercase tracking-[.15em] text-[#975b3d]">${o.category_display}</span>
+        <h3 class="mt-2 text-xl font-semibold text-[#17202a]">${o.name}</h3>
+        <p class="mt-2 text-sm text-[#56616a]">${o.available_seats} / ${o.total_seats} seats available</p>
+        <p class="text-sm text-[#56616a]">Max ${o.max_seats_per_booking} per booking</p>
+        <div class="mt-4 flex gap-3 text-sm font-semibold">
+            <a href="/offerings/${o.id}/edit/" class="text-[#6d3032] hover:underline">Edit</a>
+            <button onclick="openDeleteModal(${o.id}, '${o.name.replace(/'/g, "\\'")}')" class="text-red-600 hover:underline">Delete</button>
+        </div>
+    </div>`;
+}
+
+async function loadOfferings() {
+    const res = await apiFetch("/offerings/mine/");
+    const data = await res.json();
+    const offerings = data.results || data;
+
+    document.getElementById("empty").classList.toggle("hidden", offerings.length > 0);
+
+    const totalSeats = offerings.reduce((s, o) => s + o.total_seats, 0);
+    const availableSeats = offerings.reduce((s, o) => s + o.available_seats, 0);
+    document.getElementById("stats").innerHTML = `
+        <div class="rounded-xl bg-white border border-[#d9d2c8] p-5 text-center">
+            <p class="text-2xl font-semibold text-[#17202a]">${offerings.length}</p>
+            <p class="text-xs text-[#56616a] mt-1">Offerings</p>
+        </div>
+        <div class="rounded-xl bg-white border border-[#d9d2c8] p-5 text-center">
+            <p class="text-2xl font-semibold text-[#17202a]">${totalSeats}</p>
+            <p class="text-xs text-[#56616a] mt-1">Total Seats</p>
+        </div>
+        <div class="rounded-xl bg-white border border-[#d9d2c8] p-5 text-center">
+            <p class="text-2xl font-semibold text-[#17202a]">${availableSeats}</p>
+            <p class="text-xs text-[#56616a] mt-1">Available Now</p>
+        </div>`;
+
+    document.getElementById("offering-list").innerHTML = offerings.map(offeringCard).join("");
+}
+
+let pendingDeleteId = null;
+
+const deleteModal = document.getElementById("delete-modal");
+const deleteModalText = document.getElementById("delete-modal-text");
+const deleteCancelBtn = document.getElementById("delete-cancel-btn");
+const deleteConfirmBtn = document.getElementById("delete-confirm-btn");
+
+function openDeleteModal(id, name) {
+    pendingDeleteId = id;
+    deleteModalText.textContent = `"${name}" will be permanently removed. This cannot be undone.`;
+    deleteModal.classList.remove("hidden");
+}
+
+function closeDeleteModal() {
+    pendingDeleteId = null;
+    deleteModal.classList.add("hidden");
+}
+
+deleteCancelBtn.addEventListener("click", closeDeleteModal);
+deleteModal.addEventListener("click", (e) => {
+    if (e.target === deleteModal) closeDeleteModal();
+});
+
+deleteConfirmBtn.addEventListener("click", async () => {
+    if (!pendingDeleteId) return;
+    deleteConfirmBtn.disabled = true;
+    deleteConfirmBtn.textContent = "Deleting...";
+
+    const res = await apiFetch(`/offerings/${pendingDeleteId}/`, { method: "DELETE" });
+
+    deleteConfirmBtn.disabled = false;
+    deleteConfirmBtn.textContent = "Delete";
+    closeDeleteModal();
+
+    if (res.ok) {
+        loadOfferings();
+    } else {
+        alert("Could not delete this offering.");
+    }
+});
+
+(async () => {
+    const user = await guardProvider();
+    if (user) loadOfferings();
+})();
+</script>
+{% endblock %}

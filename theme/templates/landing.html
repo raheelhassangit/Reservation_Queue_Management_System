@@ -12,7 +12,22 @@
 {% block about_link_class %}text-white/85 transition hover:text-white{% endblock %}
 {% block signin_link_class %}text-white/85 transition hover:text-white{% endblock %}
 {% block account_link_class %}rounded-full border border-white/70 px-4 py-2 font-medium text-white transition hover:bg-white hover:text-[#4a1f25]{% endblock %}
+{% block dashboard_link_class %}text-white/85 transition hover:text-white{% endblock %}
+{% block logout_link_class %}rounded-full border border-white/70 px-4 py-2 font-medium text-white transition hover:bg-white hover:text-[#4a1f25]{% endblock %}
 {% block mobile_menu_class %}border-white/50 text-white{% endblock %}
+
+{% block extra_head %}
+<style>
+    .mobile-menu,
+    .mobile-menu a {
+        color: #17202a !important;
+    }
+
+    .mobile-menu a:hover {
+        color: #6d3032 !important;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <section class="relative isolate min-h-[670px] overflow-hidden bg-[#2b171c] sm:min-h-[720px]">
@@ -27,11 +42,11 @@
 
     <div class="mx-auto flex min-h-[670px] max-w-7xl items-center px-5 pb-16 pt-32 sm:min-h-[720px] sm:px-8 sm:pt-36 lg:px-10">
         <div class="max-w-2xl text-white">
-            <p class="mb-6 text-xs font-semibold uppercase tracking-[0.22em] text-[#e6c98c]">
+            <p class="mb-6 text-xs font-semibold uppercase tracking-[.22em] text-[#e6c98c]">
                 Reservation Queue
             </p>
 
-            <h1 class="max-w-xl text-4xl font-semibold leading-[1.08] tracking-[-0.04em] sm:text-5xl lg:text-[3.7rem]">
+            <h1 class="max-w-xl text-4xl font-semibold leading-[1.08] tracking-[-.04em] sm:text-5xl lg:text-[3.7rem]">
                 Reserve your place.<br>
                 Skip the uncertainty.
             </h1>
@@ -44,17 +59,15 @@
             <div class="mt-9 flex flex-col gap-3 sm:flex-row">
                 <a
                     href="#reservations"
-                    class="group inline-flex items-center justify-center rounded-full bg-[#d8b46c] px-6 py-3 text-sm font-semibold text-[#1b2027] transition duration-300 hover:-translate-y-1 hover:bg-[#ecd295] hover:shadow-[0_12px_28px_rgba(216,180,108,.28)]"
+                    class="group inline-flex items-center justify-center rounded-full bg-[#d8b46c] px-6 py-3 text-sm font-semibold text-[#1b2027] transition hover:-translate-y-1 hover:bg-[#ecd295] hover:shadow-[0_12px_28px_rgba(216,180,108,.28)]"
                 >
                     Explore reservations
-                    <span class="ml-3 grid h-6 w-6 place-items-center rounded-full bg-[#1b2027] text-[#ecd295] transition group-hover:rotate-45">
-                        ↗
-                    </span>
+                    <span class="ml-3 grid h-6 w-6 place-items-center rounded-full bg-[#1b2027] text-[#ecd295] transition group-hover:rotate-45">↗</span>
                 </a>
 
                 <a
                     href="/register/"
-                    class="inline-flex items-center justify-center rounded-full border border-white/65 px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-1 hover:border-white hover:bg-white/10"
+                    class="inline-flex items-center justify-center rounded-full border border-white/65 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-1 hover:border-white hover:bg-white/10"
                 >
                     Create account
                 </a>
@@ -70,40 +83,38 @@
 <section id="about" class="scroll-mt-8 bg-[#f7f4ef] py-20 sm:py-24">
     <div class="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[1fr_.9fr] lg:items-center lg:px-10">
         <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#975b3d]">
+            <p class="text-xs font-semibold uppercase tracking-[.2em] text-[#975b3d]">
                 About ReserveX AI
             </p>
 
-            <h2 class="mt-3 max-w-xl text-3xl font-semibold tracking-[-0.03em] text-[#17202a] sm:text-4xl">
+            <h2 class="mt-3 max-w-xl text-3xl font-semibold tracking-[-.03em] sm:text-4xl">
                 A calmer way to manage the moments people plan around.
             </h2>
 
             <p class="mt-6 max-w-xl leading-7 text-[#56616a]">
                 ReserveX AI brings reservation availability into one clear experience.
-                Whether someone is catching a bus, joining a course, attending an event,
-                or booking an appointment, the platform makes it easier to see what is open
-                and reserve with confidence.
+                It makes it easier to see what is open and reserve with confidence.
             </p>
 
             <p class="mt-4 max-w-xl leading-7 text-[#56616a]">
-                For providers, it offers a practical way to define capacity, create offerings,
-                and manage the seats they make available.
+                Providers can create offerings, define capacity, and manage the seats
+                they make available.
             </p>
 
             <a
                 href="#reservations"
                 class="mt-8 inline-flex items-center gap-3 rounded-full border border-[#6d3032] px-5 py-3 text-sm font-semibold text-[#6d3032] transition hover:bg-[#6d3032] hover:text-white"
             >
-                Browse current reservations
+                Browse reservation types
                 <span class="text-lg leading-none">→</span>
             </a>
         </div>
 
-        <div class="relative min-h-[330px]">
+        <div class="relative min-h-[330px]" aria-hidden="true">
             <div class="absolute left-0 top-0 h-48 w-48 rounded-[45%_55%_52%_48%/42%_42%_58%_58%] bg-[#d8b46c]"></div>
 
-            <div class="absolute right-0 top-8 max-w-xs rounded-[2rem_0.75rem_2rem_0.75rem] bg-[#1b242d] p-8 text-white shadow-[0_20px_50px_rgba(27,36,45,.18)]">
-                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-[#e6c98c]">
+            <div class="absolute right-0 top-8 max-w-xs rounded-[2rem_.75rem_2rem_.75rem] bg-[#1b242d] p-8 text-white shadow-[0_20px_50px_rgba(27,36,45,.18)]">
+                <p class="text-xs font-semibold uppercase tracking-[.18em] text-[#e6c98c]">
                     Designed around availability
                 </p>
                 <p class="mt-4 text-xl font-semibold leading-8">
@@ -111,13 +122,9 @@
                 </p>
             </div>
 
-            <div class="absolute bottom-0 left-8 rounded-[0.75rem_2rem_0.75rem_2rem] border border-[#d9d2c8] bg-white px-7 py-6 shadow-sm sm:left-10">
-                <p class="text-sm font-medium text-[#975b3d]">
-                    From planning to confirmation
-                </p>
-                <p class="mt-1 text-sm text-[#56616a]">
-                    Built for real reservation workflows.
-                </p>
+            <div class="absolute bottom-0 left-5 rounded-[.75rem_2rem_.75rem_2rem] border border-[#d9d2c8] bg-white px-6 py-5 shadow-sm sm:left-10">
+                <p class="text-sm font-semibold text-[#975b3d]">From planning to confirmation</p>
+                <p class="mt-1 text-sm text-[#56616a]">Built for real reservation workflows.</p>
             </div>
         </div>
     </div>
@@ -127,35 +134,25 @@
     <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
         <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
             <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#975b3d]">
+                <p class="text-xs font-semibold uppercase tracking-[.2em] text-[#975b3d]">
                     Built for different kinds of plans
                 </p>
-                <h2 class="mt-3 text-3xl font-semibold tracking-[-0.03em] text-[#17202a] sm:text-4xl">
+                <h2 class="mt-3 text-3xl font-semibold tracking-[-.03em] sm:text-4xl">
                     One dependable reservation queue.
                 </h2>
             </div>
 
             <a href="#reservations" class="text-sm font-semibold text-[#6d3032] transition hover:text-[#975b3d]">
-                See current availability →
+                See reservation types →
             </a>
         </div>
 
         <div class="mt-10 flex flex-wrap gap-4">
-            <span class="rounded-[1.5rem_0.5rem_1.5rem_0.5rem] bg-[#6d3032] px-6 py-4 text-lg font-medium text-white shadow-sm">
-                Bus
-            </span>
-            <span class="rounded-full border border-[#cfc3b4] bg-[#fffaf3] px-6 py-4 text-lg font-medium text-[#29313a]">
-                Course
-            </span>
-            <span class="rounded-[0.5rem_1.5rem_0.5rem_1.5rem] bg-[#d8b46c] px-6 py-4 text-lg font-medium text-[#1b2027]">
-                Event
-            </span>
-            <span class="rounded-[1.4rem_1.4rem_0.4rem_1.4rem] border border-[#cfc3b4] bg-[#fffaf3] px-6 py-4 text-lg font-medium text-[#29313a]">
-                Appointment
-            </span>
-            <span class="rounded-[1.4rem_0.4rem_1.4rem_1.4rem] bg-[#1b242d] px-6 py-4 text-lg font-medium text-white">
-                Many More
-            </span>
+            <span class="rounded-[1.5rem_.5rem_1.5rem_.5rem] bg-[#6d3032] px-6 py-4 text-lg font-medium text-white">Bus</span>
+            <span class="rounded-full border border-[#cfc3b4] bg-[#fffaf3] px-6 py-4 text-lg font-medium">Course</span>
+            <span class="rounded-[.5rem_1.5rem_.5rem_1.5rem] bg-[#d8b46c] px-6 py-4 text-lg font-medium">Event</span>
+            <span class="rounded-[1.4rem_1.4rem_.4rem_1.4rem] border border-[#cfc3b4] bg-[#fffaf3] px-6 py-4 text-lg font-medium">Appointment</span>
+            <span class="rounded-[1.4rem_.4rem_1.4rem_1.4rem] bg-[#1b242d] px-6 py-4 text-lg font-medium text-white">Many more</span>
         </div>
     </div>
 </section>
@@ -173,21 +170,21 @@
         </div>
 
         <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            <a href="/offerings/?category=bus" class="group relative overflow-hidden rounded-[2rem_.7rem_2rem_.7rem] bg-[#6d3032] p-7 text-white transition hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(109,48,50,.22)]">
+            <a href="/api/offerings/?category=bus" class="group relative overflow-hidden rounded-[2rem_.7rem_2rem_.7rem] bg-[#6d3032] p-7 text-white transition hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(109,48,50,.22)]">
                 <span class="text-xs font-semibold uppercase tracking-[.18em] text-[#ecd295]">Travel & transport</span>
                 <h3 class="mt-8 text-2xl font-semibold">Planning to travel?</h3>
                 <p class="mt-3 max-w-xs text-sm leading-6 text-white/75">Find available bus journeys and reserve your seat before you go.</p>
                 <span class="mt-7 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ecd295] text-lg text-[#6d3032] transition group-hover:rotate-45">↗</span>
             </a>
 
-            <a href="/offerings/?category=course" class="group rounded-[.7rem_2rem_.7rem_2rem] border border-[#d9d2c8] bg-[#f5eee4] p-7 transition hover:-translate-y-1 hover:border-[#b89973] hover:shadow-[0_18px_38px_rgba(34,39,44,.1)]">
+            <a href="/api/offerings/?category=course" class="group rounded-[.7rem_2rem_.7rem_2rem] border border-[#d9d2c8] bg-[#f5eee4] p-7 transition hover:-translate-y-1 hover:border-[#b89973] hover:shadow-[0_18px_38px_rgba(34,39,44,.1)]">
                 <span class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">Learning</span>
                 <h3 class="mt-8 text-2xl font-semibold">Enrolling in a course?</h3>
                 <p class="mt-3 max-w-xs text-sm leading-6 text-[#56616a]">Browse courses with open places and register for the next available session.</p>
                 <span class="mt-7 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#1b242d] text-lg text-[#ecd295] transition group-hover:rotate-45">↗</span>
             </a>
 
-            <a href="/offerings/?category=event" class="group relative overflow-hidden rounded-[1.4rem_1.4rem_.4rem_1.4rem] bg-[#1b242d] p-7 text-white transition hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(27,36,45,.22)]">
+            <a href="/api/offerings/?category=event" class="group relative overflow-hidden rounded-[1.4rem_1.4rem_.4rem_1.4rem] bg-[#1b242d] p-7 text-white transition hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(27,36,45,.22)]">
                 <div class="absolute -right-8 -top-8 h-28 w-28 rounded-full border-[18px] border-[#d8b46c]/30"></div>
                 <span class="relative text-xs font-semibold uppercase tracking-[.18em] text-[#e6c98c]">Events & tickets</span>
                 <h3 class="relative mt-8 text-2xl font-semibold">Booking an event?</h3>
@@ -195,40 +192,33 @@
                 <span class="relative mt-7 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#d8b46c] text-lg text-[#1b242d] transition group-hover:rotate-45">↗</span>
             </a>
 
-            <a href="/offerings/?category=appointment" class="group rounded-[.5rem_1.6rem_1.6rem_.5rem] border border-[#d9d2c8] bg-white p-7 transition hover:-translate-y-1 hover:border-[#b89973] hover:shadow-[0_18px_38px_rgba(34,39,44,.1)]">
+            <a href="/api/offerings/?category=appointment" class="group rounded-[.5rem_1.6rem_1.6rem_.5rem] border border-[#d9d2c8] bg-white p-7 transition hover:-translate-y-1 hover:border-[#b89973] hover:shadow-[0_18px_38px_rgba(34,39,44,.1)]">
                 <span class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">Appointments</span>
                 <h3 class="mt-8 text-2xl font-semibold">Need an appointment?</h3>
                 <p class="mt-3 max-w-xs text-sm leading-6 text-[#56616a]">Check open appointment slots and reserve a time that works for you.</p>
                 <span class="mt-7 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#6d3032] text-lg text-white transition group-hover:rotate-45">↗</span>
             </a>
 
-            <a href="/offerings/?category=other" class="group rounded-[1.8rem_.5rem_1.8rem_1.8rem] border border-[#d9d2c8] bg-[#eee8df] p-7 transition hover:-translate-y-1 hover:border-[#b89973] hover:shadow-[0_18px_38px_rgba(34,39,44,.1)]">
+            <a href="/api/offerings/?category=other" class="group rounded-[1.8rem_.5rem_1.8rem_1.8rem] border border-[#d9d2c8] bg-[#eee8df] p-7 transition hover:-translate-y-1 hover:border-[#b89973] hover:shadow-[0_18px_38px_rgba(34,39,44,.1)]">
                 <span class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">More reservations</span>
                 <h3 class="mt-8 text-2xl font-semibold">Looking for something else?</h3>
                 <p class="mt-3 max-w-xs text-sm leading-6 text-[#56616a]">Explore other reservation-based services offered by participating providers.</p>
                 <span class="mt-7 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#d8b46c] text-lg text-[#17202a] transition group-hover:rotate-45">↗</span>
             </a>
 
-            <a href="/register/?role=provider"
-                class="group flex min-h-[280px] flex-col justify-between rounded-[2rem_.75rem_2rem_.75rem] border border-dashed border-[#b89973] bg-[#fffaf3] p-7 transition hover:-translate-y-1 hover:bg-[#f5eee4] hover:shadow-[0_18px_38px_rgba(34,39,44,.1)]">
-                    <div>
-                        <span class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">
-                            For providers
-                        </span>
+            <a href="/register/?role=provider" class="group flex min-h-[280px] flex-col justify-between rounded-[2rem_.75rem_2rem_.75rem] border border-dashed border-[#b89973] bg-[#fffaf3] p-7 transition hover:-translate-y-1 hover:bg-[#f5eee4] hover:shadow-[0_18px_38px_rgba(34,39,44,.1)]">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">For providers</span>
+                    <h3 class="mt-8 text-2xl font-semibold text-[#17202a]">Offer reservations?</h3>
+                    <p class="mt-3 max-w-xs text-sm leading-6 text-[#56616a]">
+                        Create an account to add offerings, set capacity, and manage available seats.
+                    </p>
+                </div>
 
-                        <h3 class="mt-8 text-2xl font-semibold text-[#17202a]">
-                            Offer reservations?
-                        </h3>
-
-                        <p class="mt-3 max-w-xs text-sm leading-6 text-[#56616a]">
-                            Create an account to add offerings, set capacity, and manage available seats.
-                        </p>
-                    </div>
-
-                    <span class="mt-8 text-sm font-semibold text-[#6d3032] transition group-hover:translate-x-1">
-                        Become a provider →
-                    </span>
-                </a>
+                <span class="mt-8 text-sm font-semibold text-[#6d3032] transition group-hover:translate-x-1">
+                    Become a provider →
+                </span>
+            </a>
         </div>
     </div>
 </section>
@@ -238,10 +228,8 @@
 
     <div class="relative mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 lg:grid-cols-[1.15fr_.85fr] lg:items-end lg:px-10">
         <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#e6c98c]">
-                For organizations
-            </p>
-            <h2 class="mt-3 max-w-xl text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+            <p class="text-xs font-semibold uppercase tracking-[.2em] text-[#e6c98c]">For organizations</p>
+            <h2 class="mt-3 max-w-xl text-3xl font-semibold tracking-[-.03em] sm:text-4xl">
                 Make availability simple for the people you serve.
             </h2>
         </div>
@@ -253,13 +241,11 @@
             </p>
 
             <a
-                href="/register/"
+                href="/register/?role=provider"
                 class="group mt-7 inline-flex items-center rounded-full bg-[#d8b46c] px-6 py-3 text-sm font-semibold text-[#1b2027] transition hover:-translate-y-1 hover:bg-[#ecd295]"
             >
                 Offer a reservation
-                <span class="ml-3 grid h-6 w-6 place-items-center rounded-full bg-[#1b2027] text-[#ecd295] transition group-hover:rotate-45">
-                    ↗
-                </span>
+                <span class="ml-3 grid h-6 w-6 place-items-center rounded-full bg-[#1b2027] text-[#ecd295] transition group-hover:rotate-45">↗</span>
             </a>
         </div>
     </div>

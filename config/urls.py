@@ -33,6 +33,7 @@ urlpatterns = [
     
     path("", include("theme.urls")),
     path("", include("accounts.urls_web")),
+    path("offerings/", include("offerings.urls_web")),
 
 ]
 
