@@ -93,3 +93,5 @@ class MyOfferingsView(generics.ListAPIView):
                 | Q(seats__status="reserved", seats__held_until__lte=now),
             )
         )    
+        
+        
