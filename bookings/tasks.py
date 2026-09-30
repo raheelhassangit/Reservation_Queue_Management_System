@@ -10,3 +10,4 @@ def release_expired_holds():
         status=Seat.Status.RESERVED, held_until__lte=now
     ).update(status=Seat.Status.AVAILABLE, held_by=None, held_until=None)
     return f"Released {updated} expired seat holds"
+
