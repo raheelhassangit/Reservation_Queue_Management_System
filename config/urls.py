@@ -34,6 +34,7 @@ urlpatterns = [
     path("", include("theme.urls")),
     path("", include("accounts.urls_web")),
     path("offerings/", include("offerings.urls_web")),
+    path("bookings/", include("bookings.urls_web")),
 
 ]
 

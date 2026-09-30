@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}My Bookings | ReserveX AI{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-4xl">
+    <div class="mb-8">
+        <p class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">Your Account</p>
+        <h1 class="mt-1 text-3xl font-semibold text-[#17202a]">My Bookings</h1>
+    </div>
+
+    <div id="booking-list" class="space-y-4"></div>
+    <p id="empty" class="hidden text-center text-[#56616a] py-16">
+        You haven't booked anything yet — <a href="/offerings/" class="text-[#6d3032] font-semibold hover:underline">browse offerings</a>.
+    </p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function bookingCard(b) {
+    const seatList = b.seats.join(", ");
+    const date = new Date(b.created_at).toLocaleString(undefined, {
+        dateStyle: "medium", timeStyle: "short"
+    });
+
+    return `
+    <div class="rounded-[1.5rem_.5rem_1.5rem_.5rem] border border-[#d9d2c8] bg-white p-6 flex items-center justify-between gap-4 flex-wrap">
+        <div>
+            <h3 class="text-lg font-semibold text-[#17202a]">${b.offering_name}</h3>
+            <p class="mt-1 text-sm text-[#56616a]">Seats: ${seatList}</p>
+            <p class="mt-1 text-xs text-[#899198]">Booked ${date}</p>
+        </div>
+        <a href="/offerings/${b.offering}/"
+           class="rounded-full border border-[#d9d2c8] px-4 py-2 text-sm font-semibold text-[#6d3032] hover:bg-[#f2ede5]">
+            View offering
+        </a>
+    </div>`;
+}
+
+async function guardCustomer() {
+    const res = await apiFetch("/accounts/me/");
+    if (!res.ok) return null;
+    const user = await res.json();
+    if (user.role !== "customer") { window.location.href = "/"; return null; }
+    return user;
+}
+
+async function loadBookings() {
+    const res = await apiFetch("/bookings/");
+    const data = await res.json();
+    const bookings = data.results || data;
+
+    document.getElementById("empty").classList.toggle("hidden", bookings.length > 0);
+    document.getElementById("booking-list").innerHTML = bookings.map(bookingCard).join("");
+}
+
+(async () => {
+    const user = await guardCustomer();
+    if (user) loadBookings();
+})();
+</script>
+{% endblock %}
