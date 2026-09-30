@@ -1,45 +1,106 @@
-{% extends "base.html" %}
+{% extends "auth_base.html" %}
 {% load static %}
+
+{% block title %}Sign in | ReserveX AI{% endblock %}
+
 {% block content %}
-<div class="flex bg-white rounded-2xl shadow overflow-hidden max-w-4xl mx-auto">
-    <div class="hidden md:block w-1/2">
-        <img src="{% static 'images/auth.jpg' %}" alt="" class="h-full w-full object-cover">
+<section class="mx-auto my-6 grid max-w-5xl overflow-hidden rounded-[.75rem_2rem_.75rem_2rem] border border-[#ddd6cd] bg-white shadow-[0_20px_50px_rgba(27,36,45,.10)] md:grid-cols-2">
+    <div class="relative hidden min-h-[590px] md:block">
+        <img
+            src="{% static 'images/auth.jpg' %}"
+            alt="Travel tickets, calendar, and reservation items"
+            class="absolute inset-0 h-full w-full object-cover"
+        >
+        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(27,36,45,.12),rgba(27,36,45,.74))]"></div>
+
+        <div class="absolute inset-x-0 bottom-0 p-10 text-white">
+            <p class="text-xs font-semibold uppercase tracking-[.2em] text-[#ecd295]">Welcome back</p>
+            <h1 class="mt-3 text-3xl font-semibold leading-tight">Your plans are waiting.</h1>
+            <p class="mt-4 max-w-sm text-sm leading-6 text-white/80">
+                Sign in to browse availability, hold your selection, and manage reservations.
+            </p>
+        </div>
     </div>
-    <div class="w-full md:w-1/2 p-8">
-        <h2 class="text-2xl font-semibold text-maroon mb-6">Welcome back</h2>
-        <form id="login-form" class="space-y-4">
-            <input type="text" id="username" placeholder="Username" required
-                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold">
-            <input type="password" id="password" placeholder="Password" required
-                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold">
-            <button type="submit" class="w-full bg-maroon text-white rounded py-2 hover:bg-maroon-dark">
-                Login
+
+    <div class="flex flex-col justify-center p-7 sm:p-10">
+        <p class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">Sign in</p>
+        <h2 class="mt-2 text-3xl font-semibold tracking-[-.03em] text-[#17202a]">Welcome back</h2>
+        <p class="mt-3 text-sm leading-6 text-[#56616a]">
+            Enter your account details to continue.
+        </p>
+
+        <form id="login-form" class="mt-8 space-y-5">
+            <div>
+                <label for="username" class="mb-1.5 block text-sm font-medium text-[#29313a]">
+                    Username
+                </label>
+                <input
+                    id="username"
+                    type="text"
+                    required
+                    autocomplete="username"
+                    placeholder="Your username"
+                    class="w-full rounded-xl border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35"
+                >
+            </div>
+
+            <div>
+                <label for="password" class="mb-1.5 block text-sm font-medium text-[#29313a]">
+                    Password
+                </label>
+                <input
+                    id="password"
+                    type="password"
+                    required
+                    autocomplete="current-password"
+                    placeholder="Your password"
+                    class="w-full rounded-xl border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35"
+                >
+            </div>
+
+            <p id="error" class="hidden rounded-xl bg-[#f8eeee] px-4 py-3 text-sm text-[#8d3034]" aria-live="polite"></p>
+
+            <button type="submit" class="group flex w-full items-center justify-center rounded-full bg-[#6d3032] px-5 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#4a1f25]">
+                Sign in
+                <span class="ml-3 grid h-6 w-6 place-items-center rounded-full bg-[#d8b46c] text-[#17202a] transition group-hover:rotate-45">
+                    ↗
+                </span>
             </button>
         </form>
-        <p id="error" class="text-red-600 text-sm mt-2"></p>
-        <p class="text-sm text-gray-500 mt-4">No account? <a href="/register/" class="text-maroon font-medium hover:underline">Register</a></p>
+
+        <p class="mt-7 text-center text-sm text-[#56616a]">
+            New to ReserveX AI?
+            <a href="/register/" class="font-semibold text-[#6d3032] hover:text-[#975b3d]">
+                Create an account
+            </a>
+        </p>
     </div>
-</div>
+</section>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-document.getElementById("login-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const res = await fetch(API_BASE + "/token/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      username: document.getElementById("username").value,
-      password: document.getElementById("password").value,
-    }),
-  });
-  if (res.ok) {
-    saveTokens(await res.json());
-    window.location.href = "/offerings/";
-  } else {
-    document.getElementById("error").textContent = "Invalid credentials";
-  }
+document.getElementById("login-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const response = await fetch(API_BASE + "/token/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value
+        })
+    });
+
+    if (response.ok) {
+        saveTokens(await response.json());
+        window.location.href = "/#reservations";
+        return;
+    }
+
+    const error = document.getElementById("error");
+    error.textContent = "Your username or password is incorrect.";
+    error.classList.remove("hidden");
 });
 </script>
 {% endblock %}
