@@ -1,0 +1,41 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}ReserveX AI{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% tailwind_css %}
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: #8c4b42 #f1ece4;
+        }
+        ::-webkit-scrollbar { width: 13px; }
+        ::-webkit-scrollbar-track { background: #f1ece4; border-left: 3px solid #f7f4ef; }
+        ::-webkit-scrollbar-thumb { background: #8c4b42; border: 3px solid #f1ece4; border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #1b242d; }
+        ::selection { background: #d8b46c; color: #17202a; }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="min-h-screen bg-[#f7f4ef] font-sans text-[#17202a] flex flex-col">
+    <header class="px-5 py-6 sm:px-8">
+        <a href="/" class="inline-flex items-center gap-3" aria-label="ReserveX AI home">
+            <img src="{% static 'images/logo.jpg' %}" alt="ReserveX AI" class="h-9 w-9 rounded-full object-cover shadow-sm">
+            <span class="font-semibold tracking-tight text-[#17202a]">ReserveX AI</span>
+        </a>
+    </header>
+
+    <main class="flex-1 flex items-center justify-center px-4 pb-10">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{% static 'js/api.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

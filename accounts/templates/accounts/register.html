@@ -1,70 +1,141 @@
-{% extends "base.html" %}
+{% extends "auth_base.html" %}
 {% load static %}
-{% block content %}
-<div class="flex bg-white rounded-2xl shadow overflow-hidden max-w-4xl mx-auto">
-    <div class="hidden md:block w-1/2">
-        <img src="{% static 'images/auth.jpg' %}" alt="" class="h-full w-full object-cover">
-    </div>
-    <div class="w-full md:w-1/2 p-8">
-        <h2 class="text-2xl font-semibold text-maroon mb-4">Create your account</h2>
 
-        <div class="flex gap-4 mb-4 text-sm">
-            <label class="flex items-center gap-1">
-                <input type="radio" name="role" value="customer" checked> Customer
+{% block title %}Create account | ReserveX AI{% endblock %}
+
+{% block content %}
+<section class="mx-auto my-6 grid max-w-5xl overflow-hidden rounded-[2rem_.75rem_2rem_.75rem] border border-[#ddd6cd] bg-white shadow-[0_20px_50px_rgba(27,36,45,.10)] md:grid-cols-2">
+    <div class="relative hidden min-h-[620px] md:block">
+        <img
+            src="{% static 'images/auth.jpg' %}"
+            alt="Travel tickets, calendar, and reservation items"
+            class="absolute inset-0 h-full w-full object-cover"
+        >
+        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(27,36,45,.12),rgba(27,36,45,.72))]"></div>
+
+        <div class="absolute inset-x-0 bottom-0 p-10 text-white">
+            <p class="text-xs font-semibold uppercase tracking-[.2em] text-[#ecd295]">Reservation Queue</p>
+            <h1 class="mt-3 text-3xl font-semibold leading-tight">Make your next plan feel certain.</h1>
+            <p class="mt-4 max-w-sm text-sm leading-6 text-white/80">
+                Join ReserveX AI to discover availability and manage reservations with clarity.
+            </p>
+        </div>
+    </div>
+
+    <div class="p-7 sm:p-10">
+        <p class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">Create account</p>
+        <h2 class="mt-2 text-3xl font-semibold tracking-[-.03em] text-[#17202a]">Get started with ReserveX AI</h2>
+        <p class="mt-3 text-sm leading-6 text-[#56616a]">Choose how you will use the platform.</p>
+
+        <div class="mt-7 grid grid-cols-2 gap-3" role="radiogroup" aria-label="Account type">
+            <label class="role-option cursor-pointer rounded-[1.25rem_.4rem_1.25rem_.4rem] border border-[#6d3032] bg-[#f8eeee] p-4">
+                <input type="radio" name="role" value="customer" checked class="sr-only">
+                <span class="block text-sm font-semibold text-[#6d3032]">I’m reserving</span>
+                <span class="mt-1 block text-xs leading-5 text-[#56616a]">Find and book available seats.</span>
             </label>
-            <label class="flex items-center gap-1">
-                <input type="radio" name="role" value="provider"> Provider
+
+            <label class="role-option cursor-pointer rounded-[.4rem_1.25rem_.4rem_1.25rem] border border-[#ddd6cd] p-4">
+                <input type="radio" name="role" value="provider" class="sr-only">
+                <span class="block text-sm font-semibold text-[#17202a]">I’m a provider</span>
+                <span class="mt-1 block text-xs leading-5 text-[#56616a]">Create and manage offerings.</span>
             </label>
         </div>
 
-        <form id="register-form" class="space-y-4">
-            <input type="text" id="username" placeholder="Username" required
-                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold">
-            <input type="email" id="email" placeholder="Email" required
-                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold">
-            <input type="password" id="password" placeholder="Password" required
-                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold">
-            <input type="text" id="org_name" placeholder="Organization name" style="display:none"
-                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold">
-            <button type="submit" class="w-full bg-maroon text-white rounded py-2 hover:bg-maroon-dark">
-                Register
+        <form id="register-form" class="mt-7 space-y-4">
+            <div>
+                <label for="username" class="mb-1.5 block text-sm font-medium text-[#29313a]">Username</label>
+                <input id="username" type="text" required autocomplete="username" placeholder="Choose a username"
+                    class="w-full rounded-xl border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35">
+            </div>
+
+            <div>
+                <label for="email" class="mb-1.5 block text-sm font-medium text-[#29313a]">Email address</label>
+                <input id="email" type="email" required autocomplete="email" placeholder="you@example.com"
+                    class="w-full rounded-xl border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35">
+            </div>
+
+            <div id="organization-wrap" class="hidden">
+                <label for="org_name" class="mb-1.5 block text-sm font-medium text-[#29313a]">Organization name</label>
+                <input id="org_name" type="text" placeholder="Your organization"
+                    class="w-full rounded-xl border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35">
+            </div>
+
+            <div>
+                <label for="password" class="mb-1.5 block text-sm font-medium text-[#29313a]">Password</label>
+                <input id="password" type="password" required autocomplete="new-password" placeholder="Create a secure password"
+                    class="w-full rounded-xl border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35">
+            </div>
+
+            <p id="error" class="hidden rounded-xl bg-[#f8eeee] px-4 py-3 text-sm text-[#8d3034]" aria-live="polite"></p>
+
+            <button type="submit" class="group flex w-full items-center justify-center rounded-full bg-[#6d3032] px-5 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#4a1f25]">
+                Create account
+                <span class="ml-3 grid h-6 w-6 place-items-center rounded-full bg-[#d8b46c] text-[#17202a] transition group-hover:rotate-45">↗</span>
             </button>
         </form>
-        <p id="error" class="text-red-600 text-sm mt-2"></p>
-        <p class="text-sm text-gray-500 mt-4">Already have an account? <a href="/login/" class="text-maroon font-medium hover:underline">Login</a></p>
+
+        <p class="mt-6 text-center text-sm text-[#56616a]">
+            Already have an account?
+            <a href="/login/" class="font-semibold text-[#6d3032] hover:text-[#975b3d]">Sign in</a>
+        </p>
     </div>
-</div>
+</section>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-const orgField = document.getElementById("org_name");
-document.querySelectorAll('input[name="role"]').forEach(r =>
-  r.addEventListener("change", (e) => {
-    orgField.style.display = e.target.value === "provider" ? "block" : "none";
-  })
-);
+const organizationWrap = document.getElementById("organization-wrap");
+const organizationInput = document.getElementById("org_name");
+const roleOptions = document.querySelectorAll(".role-option");
 
-document.getElementById("register-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const role = document.querySelector('input[name="role"]:checked').value;
-  const payload = {
-    username: document.getElementById("username").value,
-    email: document.getElementById("email").value,
-    password: document.getElementById("password").value,
-  };
-  if (role === "provider") payload.organization_name = orgField.value;
+function updateRole() {
+    const provider = document.querySelector('input[name="role"]:checked').value === "provider";
 
-  const res = await fetch(`${API_BASE}/accounts/register/${role}/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (res.ok) {
-    window.location.href = "/login/";
-  } else {
-    document.getElementById("error").textContent = JSON.stringify(await res.json());
-  }
+    organizationWrap.classList.toggle("hidden", !provider);
+    organizationInput.required = provider;
+
+    roleOptions.forEach((option) => {
+        const selected = option.querySelector("input").checked;
+        option.classList.toggle("border-[#6d3032]", selected);
+        option.classList.toggle("bg-[#f8eeee]", selected);
+        option.classList.toggle("border-[#ddd6cd]", !selected);
+    });
+}
+
+document.querySelectorAll('input[name="role"]').forEach(input => input.addEventListener("change", updateRole));
+
+document.getElementById("register-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const role = document.querySelector('input[name="role"]:checked').value;
+    const payload = {
+        username: document.getElementById("username").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value
+    };
+
+    if (role === "provider") payload.organization_name = organizationInput.value;
+
+    const response = await fetch(`${API_BASE}/accounts/register/${role}/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    if (response.ok) {
+        window.location.href = "/login/";
+        return;
+    }
+
+    const error = document.getElementById("error");
+    error.textContent = JSON.stringify(await response.json());
+    error.classList.remove("hidden");
 });
+
+const params = new URLSearchParams(window.location.search);
+if (params.get("role") === "provider") {
+    document.querySelector('input[name="role"][value="provider"]').checked = true;
+}
+updateRole();
 </script>
 {% endblock %}
