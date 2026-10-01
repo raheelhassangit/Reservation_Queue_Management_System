@@ -20,6 +20,12 @@ class Offering(models.Model):
     total_seats = models.PositiveIntegerField()
     max_seats_per_booking = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
+    location = models.CharField(max_length=200, blank=True, default="") 
+    origin = models.CharField(max_length=150, blank=True, default="")     
+    destination = models.CharField(max_length=150, blank=True, default="") 
+    starts_at = models.DateTimeField(null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    description = models.TextField(blank=True, default="")
 
     def display_category(self):
         return self.custom_category if self.category == self.Category.OTHER else self.get_category_display()
