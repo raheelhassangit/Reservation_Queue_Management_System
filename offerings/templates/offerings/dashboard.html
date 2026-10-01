@@ -47,21 +47,45 @@
 async function guardProvider() {
     const res = await apiFetch("/accounts/me/");
     if (!res.ok) return null;
+
     const user = await res.json();
-    if (user.role !== "provider") { window.location.href = "/"; return null; }
+
+    if (user.role !== "provider") {
+        window.location.href = "/";
+        return null;
+    }
+
     return user;
 }
 
 function offeringCard(o) {
     return `
-    <div class="rounded-[1.5rem_.5rem_1.5rem_.5rem] border border-[#d9d2c8] bg-white p-6">
+    <div class="rounded-[1.5rem_.5rem_1.5rem_.5rem] border border-[#d9d2c8] bg-white p-6 ${!o.is_active ? "opacity-60" : ""}">
         <span class="text-xs font-semibold uppercase tracking-[.15em] text-[#975b3d]">${o.category_display}</span>
+
+        ${!o.is_active ? '<span class="ml-2 text-xs font-semibold text-[#8d3034]">Archived</span>' : ""}
+
         <h3 class="mt-2 text-xl font-semibold text-[#17202a]">${o.name}</h3>
-        <p class="mt-2 text-sm text-[#56616a]">${o.available_seats} / ${o.total_seats} seats available</p>
-        <p class="text-sm text-[#56616a]">Max ${o.max_seats_per_booking} per booking</p>
+
+        <p class="mt-2 text-sm text-[#56616a]">
+            ${o.available_seats} / ${o.total_seats} seats available
+        </p>
+
+        <p class="text-sm text-[#56616a]">
+            Max ${o.max_seats_per_booking} per booking
+        </p>
+
         <div class="mt-4 flex gap-3 text-sm font-semibold">
-            <a href="/offerings/${o.id}/edit/" class="text-[#6d3032] hover:underline">Edit</a>
-            <button onclick="openDeleteModal(${o.id}, '${o.name.replace(/'/g, "\\'")}')" class="text-red-600 hover:underline">Delete</button>
+            <a href="/offerings/${o.id}/edit/" class="text-[#6d3032] hover:underline">
+                Edit
+            </a>
+
+            <button
+                onclick="toggleArchive(${o.id})"
+                class="${o.is_active ? "text-red-600" : "text-green-700"} hover:underline"
+            >
+                ${o.is_active ? "Archive" : "Restore"}
+            </button>
         </div>
     </div>`;
 }
@@ -71,25 +95,52 @@ async function loadOfferings() {
     const data = await res.json();
     const offerings = data.results || data;
 
-    document.getElementById("empty").classList.toggle("hidden", offerings.length > 0);
+    document.getElementById("empty").classList.toggle(
+        "hidden",
+        offerings.length > 0
+    );
 
-    const totalSeats = offerings.reduce((s, o) => s + o.total_seats, 0);
-    const availableSeats = offerings.reduce((s, o) => s + o.available_seats, 0);
+    const totalSeats = offerings.reduce(
+        (s, o) => s + o.total_seats,
+        0
+    );
+
+    const availableSeats = offerings.reduce(
+        (s, o) => s + o.available_seats,
+        0
+    );
+
     document.getElementById("stats").innerHTML = `
         <div class="rounded-xl bg-white border border-[#d9d2c8] p-5 text-center">
             <p class="text-2xl font-semibold text-[#17202a]">${offerings.length}</p>
             <p class="text-xs text-[#56616a] mt-1">Offerings</p>
         </div>
+
         <div class="rounded-xl bg-white border border-[#d9d2c8] p-5 text-center">
             <p class="text-2xl font-semibold text-[#17202a]">${totalSeats}</p>
             <p class="text-xs text-[#56616a] mt-1">Total Seats</p>
         </div>
+
         <div class="rounded-xl bg-white border border-[#d9d2c8] p-5 text-center">
             <p class="text-2xl font-semibold text-[#17202a]">${availableSeats}</p>
             <p class="text-xs text-[#56616a] mt-1">Available Now</p>
         </div>`;
 
-    document.getElementById("offering-list").innerHTML = offerings.map(offeringCard).join("");
+    document.getElementById("offering-list").innerHTML =
+        offerings.map(offeringCard).join("");
+}
+
+async function toggleArchive(id) {
+    const res = await apiFetch(
+        `/offerings/${id}/archive/`,
+        { method: "POST" }
+    );
+
+    if (res.ok) {
+        loadOfferings();
+    } else {
+        alert("Could not update this offering.");
+    }
 }
 
 let pendingDeleteId = null;
@@ -101,7 +152,10 @@ const deleteConfirmBtn = document.getElementById("delete-confirm-btn");
 
 function openDeleteModal(id, name) {
     pendingDeleteId = id;
-    deleteModalText.textContent = `"${name}" will be permanently removed. This cannot be undone.`;
+
+    deleteModalText.textContent =
+        `"${name}" will be permanently removed. This cannot be undone.`;
+
     deleteModal.classList.remove("hidden");
 }
 
@@ -111,19 +165,27 @@ function closeDeleteModal() {
 }
 
 deleteCancelBtn.addEventListener("click", closeDeleteModal);
+
 deleteModal.addEventListener("click", (e) => {
-    if (e.target === deleteModal) closeDeleteModal();
+    if (e.target === deleteModal) {
+        closeDeleteModal();
+    }
 });
 
 deleteConfirmBtn.addEventListener("click", async () => {
     if (!pendingDeleteId) return;
+
     deleteConfirmBtn.disabled = true;
     deleteConfirmBtn.textContent = "Deleting...";
 
-    const res = await apiFetch(`/offerings/${pendingDeleteId}/`, { method: "DELETE" });
+    const res = await apiFetch(
+        `/offerings/${pendingDeleteId}/`,
+        { method: "DELETE" }
+    );
 
     deleteConfirmBtn.disabled = false;
     deleteConfirmBtn.textContent = "Delete";
+
     closeDeleteModal();
 
     if (res.ok) {
@@ -135,7 +197,10 @@ deleteConfirmBtn.addEventListener("click", async () => {
 
 (async () => {
     const user = await guardProvider();
-    if (user) loadOfferings();
+
+    if (user) {
+        loadOfferings();
+    }
 })();
 </script>
 {% endblock %}

@@ -26,6 +26,7 @@ class Offering(models.Model):
     starts_at = models.DateTimeField(null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     description = models.TextField(blank=True, default="")
+    is_active = models.BooleanField(default=True)
 
     def display_category(self):
         return self.custom_category if self.category == self.Category.OTHER else self.get_category_display()
