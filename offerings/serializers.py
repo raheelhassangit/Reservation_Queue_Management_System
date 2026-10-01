@@ -4,7 +4,11 @@ from .models import Offering, Seat
 class OfferingCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offering
-        fields = ["id", "name", "category", "custom_category", "total_seats", "max_seats_per_booking"]
+        fields = [
+            "id", "name", "category", "custom_category",
+            "total_seats", "max_seats_per_booking",
+            "location", "origin", "destination", "starts_at", "price", "description",
+        ]
 
     def validate(self, data):
         if data.get("category") == Offering.Category.OTHER and not data.get("custom_category"):
@@ -42,6 +46,7 @@ class OfferingListSerializer(serializers.ModelSerializer):
         fields = [
             "id", "name", "category_display", "organization_name",
             "total_seats", "available_seats", "max_seats_per_booking",
+            "location", "origin", "destination", "starts_at", "price",
         ]
 
     def get_available_seats(self, obj):
@@ -54,12 +59,15 @@ class OfferingDetailSerializer(OfferingListSerializer):
     seats = SeatSerializer(many=True, read_only=True)
 
     class Meta(OfferingListSerializer.Meta):
-        fields = OfferingListSerializer.Meta.fields + ["seats"]    
+        fields = OfferingListSerializer.Meta.fields + ["seats", "description"]    
         
 class OfferingUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offering
-        fields = ["name", "category", "custom_category", "max_seats_per_booking"]
+        fields = [
+            "name", "category", "custom_category", "max_seats_per_booking",
+            "location", "origin", "destination", "starts_at", "price", "description",
+        ]
 
     def validate(self, data):
         category = data.get("category", getattr(self.instance, "category", None))

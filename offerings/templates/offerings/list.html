@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block title %}Browse Offerings | ReserveX AI{% endblock %}
 
 {% block content %}
@@ -8,76 +7,33 @@
     <div class="mb-8">
         <p class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">Browse</p>
         <h1 class="mt-1 text-3xl font-semibold text-[#17202a]">What are you planning?</h1>
-        <p class="mt-2 text-sm text-[#56616a]">Find current reservations by category, provider, or name.</p>
     </div>
 
-    <form id="filters-form" class="mb-8 rounded-[1.5rem_.5rem_1.5rem_.5rem] border border-[#d9d2c8] bg-[#fffdf9] p-4 sm:p-5">
-        <div class="flex flex-col gap-3 lg:flex-row">
-            <input
-                id="search-input"
-                type="search"
-                placeholder="Search by name or provider..."
-                class="min-w-[200px] flex-1 rounded-xl border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35"
-            >
+    <div class="mb-6 flex flex-wrap gap-3">
+        <input id="search-input" type="text" placeholder="Search by name..."
+            class="flex-1 min-w-[200px] rounded-xl border border-[#d9d2c8] px-4 py-2.5 text-sm outline-none focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35">
 
-            <div class="relative lg:w-52" data-dropdown>
-                <input id="category-filter" type="hidden" value="">
+        <select id="category-filter"
+            class="rounded-xl border border-[#d9d2c8] px-4 py-2.5 text-sm outline-none focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35">
+            <option value="">All categories</option>
+            <option value="bus">Bus</option>
+            <option value="course">Course</option>
+            <option value="event">Event</option>
+            <option value="appointment">Appointment</option>
+            <option value="other">Other</option>
+        </select>
 
-                <button
-                    type="button"
-                    data-dropdown-trigger
-                    aria-expanded="false"
-                    class="flex w-full items-center justify-between rounded-[1rem_.4rem_1rem_.4rem] border border-[#d9d2c8] bg-white px-4 py-3 text-left text-sm font-medium text-[#29313a] outline-none transition hover:border-[#b89973] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35"
-                >
-                    <span data-dropdown-label>All categories</span>
-                    <span class="grid h-7 w-7 place-items-center rounded-full bg-[#eee8df] text-[#6d3032]">↓</span>
-                </button>
+        <select id="ordering-select"
+            class="rounded-xl border border-[#d9d2c8] px-4 py-2.5 text-sm outline-none focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35">
+            <option value="-created_at">Newest first</option>
+            <option value="total_seats">Seats: low to high</option>
+            <option value="-total_seats">Seats: high to low</option>
+            <option value="-available_count">Most available</option>
+        </select>
+    </div>
 
-                <div data-dropdown-menu class="absolute z-30 mt-2 hidden w-full overflow-hidden rounded-[.75rem_1.25rem_.75rem_1.25rem] border border-[#d9d2c8] bg-white p-2 shadow-[0_16px_35px_rgba(27,36,45,.14)]">
-                    <button type="button" data-value="" data-label="All categories" class="w-full rounded-lg bg-[#f5eee4] px-3 py-2.5 text-left text-sm font-medium text-[#6d3032]">All categories</button>
-                    <button type="button" data-value="bus" data-label="Bus travel" class="mt-1 w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#29313a] hover:bg-[#f5eee4]">Bus travel</button>
-                    <button type="button" data-value="course" data-label="Courses" class="mt-1 w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#29313a] hover:bg-[#f5eee4]">Courses</button>
-                    <button type="button" data-value="event" data-label="Events" class="mt-1 w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#29313a] hover:bg-[#f5eee4]">Events</button>
-                    <button type="button" data-value="appointment" data-label="Appointments" class="mt-1 w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#29313a] hover:bg-[#f5eee4]">Appointments</button>
-                    <button type="button" data-value="other" data-label="Other reservations" class="mt-1 w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#29313a] hover:bg-[#f5eee4]">Other reservations</button>
-                </div>
-            </div>
-
-            <div class="relative lg:w-52" data-dropdown>
-                <input id="ordering-select" type="hidden" value="-created_at">
-
-                <button
-                    type="button"
-                    data-dropdown-trigger
-                    aria-expanded="false"
-                    class="flex w-full items-center justify-between rounded-[.4rem_1rem_.4rem_1rem] border border-[#d9d2c8] bg-white px-4 py-3 text-left text-sm font-medium text-[#29313a] outline-none transition hover:border-[#b89973] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35"
-                >
-                    <span data-dropdown-label>Newest first</span>
-                    <span class="grid h-7 w-7 place-items-center rounded-full bg-[#eee8df] text-[#6d3032]">↓</span>
-                </button>
-
-                <div data-dropdown-menu class="absolute z-30 mt-2 hidden w-full overflow-hidden rounded-[1.25rem_.75rem_1.25rem_.75rem] border border-[#d9d2c8] bg-white p-2 shadow-[0_16px_35px_rgba(27,36,45,.14)]">
-                    <button type="button" data-value="-created_at" data-label="Newest first" class="w-full rounded-lg bg-[#f5eee4] px-3 py-2.5 text-left text-sm font-medium text-[#6d3032]">Newest first</button>
-                    <button type="button" data-value="-available_count" data-label="Most available" class="mt-1 w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#29313a] hover:bg-[#f5eee4]">Most available</button>
-                    <button type="button" data-value="total_seats" data-label="Seats: low to high" class="mt-1 w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#29313a] hover:bg-[#f5eee4]">Seats: low to high</button>
-                    <button type="button" data-value="-total_seats" data-label="Seats: high to low" class="mt-1 w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#29313a] hover:bg-[#f5eee4]">Seats: high to low</button>
-                </div>
-            </div>
-
-            <button
-                type="submit"
-                class="rounded-full bg-[#6d3032] px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#4a1f25]"
-            >
-                Apply filters
-            </button>
-        </div>
-    </form>
-
-    <div id="offering-grid" class="grid gap-5 md:grid-cols-2 lg:grid-cols-3"></div>
-
-    <p id="empty" class="hidden py-16 text-center text-[#56616a]">
-        No offerings match your filters.
-    </p>
+    <div id="offering-grid" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
+    <p id="empty" class="hidden text-center text-[#56616a] py-16">No offerings match your filters.</p>
 
     <div id="pagination" class="mt-8 flex items-center justify-center gap-4 text-sm"></div>
 </div>
@@ -89,176 +45,89 @@ let currentPage = 1;
 let nextUrl = null;
 let prevUrl = null;
 
-const form = document.getElementById("filters-form");
-const searchInput = document.getElementById("search-input");
-const categoryFilter = document.getElementById("category-filter");
-const orderingSelect = document.getElementById("ordering-select");
-const grid = document.getElementById("offering-grid");
-const empty = document.getElementById("empty");
-const pagination = document.getElementById("pagination");
+function offeringCard(o) {
+    const when = o.starts_at ? new Date(o.starts_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "";
+    const place = (o.origin && o.destination) ? `${o.origin} → ${o.destination}` : o.location;
 
-function setupDropdown(element) {
-    const input = element.querySelector("input");
-    const trigger = element.querySelector("[data-dropdown-trigger]");
-    const label = element.querySelector("[data-dropdown-label]");
-    const menu = element.querySelector("[data-dropdown-menu]");
-    const options = element.querySelectorAll("[data-value]");
-
-    function select(value, text) {
-        input.value = value;
-        label.textContent = text;
-        menu.classList.add("hidden");
-        trigger.setAttribute("aria-expanded", "false");
-
-        options.forEach((option) => {
-            const active = option.dataset.value === value;
-            option.classList.toggle("bg-[#f5eee4]", active);
-            option.classList.toggle("text-[#6d3032]", active);
-            option.classList.toggle("font-medium", active);
-        });
-    }
-
-    trigger.addEventListener("click", () => {
-        const isOpen = !menu.classList.contains("hidden");
-        document.querySelectorAll("[data-dropdown-menu]").forEach(item => item.classList.add("hidden"));
-        document.querySelectorAll("[data-dropdown-trigger]").forEach(item => item.setAttribute("aria-expanded", "false"));
-
-        if (!isOpen) {
-            menu.classList.remove("hidden");
-            trigger.setAttribute("aria-expanded", "true");
-        }
-    });
-
-    options.forEach((option) => {
-        option.addEventListener("click", () => select(option.dataset.value, option.dataset.label));
-    });
-
-    return { select };
-}
-
-const dropdowns = [...document.querySelectorAll("[data-dropdown]")].map(setupDropdown);
-const categoryDropdown = dropdowns[0];
-const orderingDropdown = dropdowns[1];
-
-document.addEventListener("click", (event) => {
-    if (!event.target.closest("[data-dropdown]")) {
-        document.querySelectorAll("[data-dropdown-menu]").forEach(menu => menu.classList.add("hidden"));
-        document.querySelectorAll("[data-dropdown-trigger]").forEach(button => button.setAttribute("aria-expanded", "false"));
-    }
-});
-
-function escapeHtml(value) {
-    return String(value ?? "").replace(/[&<>'"]/g, (character) => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        "'": "&#39;",
-        '"': "&quot;"
-    })[character]);
-}
-
-function offeringCard(offering) {
     return `
-        <a href="/offerings/${offering.id}/"
-           class="group block rounded-[1.5rem_.5rem_1.5rem_.5rem] border border-[#d9d2c8] bg-white p-6 transition hover:-translate-y-1 hover:border-[#b89973] hover:shadow-[0_12px_28px_rgba(27,36,45,.08)]">
-            <div class="flex items-start justify-between gap-3">
-                <span class="text-xs font-semibold uppercase tracking-[.15em] text-[#975b3d]">
-                    ${escapeHtml(offering.category_display)}
-                </span>
-                <span class="rounded-full bg-[#f3eee7] px-2.5 py-1 text-xs text-[#56616a]">
-                    ${escapeHtml(offering.available_seats)} available
-                </span>
-            </div>
-
-            <h3 class="mt-5 text-xl font-semibold text-[#17202a]">${escapeHtml(offering.name)}</h3>
-            <p class="mt-1 text-xs text-[#899198]">${escapeHtml(offering.organization_name)}</p>
-
-            <div class="mt-5 border-t border-[#eee9e2] pt-4 text-sm text-[#56616a]">
-                Max ${escapeHtml(offering.max_seats_per_booking)} per booking
-            </div>
-        </a>
-    `;
+    <a href="/offerings/${o.id}/" class="block rounded-[1.5rem_.5rem_1.5rem_.5rem] border border-[#d9d2c8] bg-white p-6 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(27,36,45,.08)] transition">
+        <span class="text-xs font-semibold uppercase tracking-[.15em] text-[#975b3d]">${o.category_display}</span>
+        <h3 class="mt-2 text-xl font-semibold text-[#17202a]">${o.name}</h3>
+        <p class="mt-1 text-xs text-[#899198]">${o.organization_name}</p>
+        ${place ? `<p class="mt-2 text-sm text-[#56616a]">📍 ${place}</p>` : ""}
+        ${when ? `<p class="text-sm text-[#56616a]">🕐 ${when}</p>` : ""}
+        <p class="mt-2 text-sm font-semibold text-[#6d3032]">Rs. ${Number(o.price).toLocaleString()}</p>
+        <p class="mt-1 text-sm text-[#56616a]">${o.available_seats} / ${o.total_seats} seats available</p>
+    </a>`;
 }
 
 function buildQuery(page = 1) {
     const params = new URLSearchParams();
+    const search = document.getElementById("search-input").value.trim();
+    const category = document.getElementById("category-filter").value;
+    const ordering = document.getElementById("ordering-select").value;
 
-    if (searchInput.value.trim()) params.set("search", searchInput.value.trim());
-    if (categoryFilter.value) params.set("category", categoryFilter.value);
-    if (orderingSelect.value) params.set("ordering", orderingSelect.value);
-
+    if (search) params.set("search", search);
+    if (category) params.set("category", category);
+    if (ordering) params.set("ordering", ordering);
     params.set("page", page);
-    return params;
+    return params.toString();
 }
 
 async function loadOfferings(page = 1) {
     currentPage = page;
-    grid.innerHTML = `<p class="text-sm text-[#56616a]">Loading reservations…</p>`;
+    const res = await fetch(`${API_BASE}/offerings/?${buildQuery(page)}`);
+    const data = await res.json();
 
-    const response = await fetch(`${API_BASE}/offerings/?${buildQuery(page)}`);
-
-    if (!response.ok) {
-        grid.innerHTML = "";
-        empty.textContent = "Reservations are unavailable right now. Please try again shortly.";
-        empty.classList.remove("hidden");
-        return;
-    }
-
-    const data = await response.json();
     const offerings = data.results || [];
-
-    grid.innerHTML = offerings.map(offeringCard).join("");
-    empty.classList.toggle("hidden", offerings.length > 0);
+    document.getElementById("empty").classList.toggle("hidden", offerings.length > 0);
+    document.getElementById("offering-grid").innerHTML = offerings.map(offeringCard).join("");
 
     nextUrl = data.next;
     prevUrl = data.previous;
-
-    const query = buildQuery(page).toString();
-    window.history.replaceState({}, "", `${window.location.pathname}?${query}`);
-
-    renderPagination(data.count || 0);
+    renderPagination(data.count);
 }
 
 function renderPagination(count) {
-    const totalPages = Math.max(1, Math.ceil(count / 10));
-
-    pagination.innerHTML = `
-        <button id="prev-btn" ${prevUrl ? "" : "disabled"}
-            class="rounded-full border border-[#d9d2c8] px-4 py-2 font-medium ${prevUrl ? "text-[#29313a] hover:bg-[#f2ede5]" : "cursor-not-allowed text-[#c3bcb2]"}">
+    const pageSize = 10;
+    const totalPages = Math.max(1, Math.ceil(count / pageSize));
+    document.getElementById("pagination").innerHTML = `
+        <button id="prev-btn" ${!prevUrl ? "disabled" : ""}
+            class="rounded-full border border-[#d9d2c8] px-4 py-2 font-medium ${prevUrl ? "text-[#29313a] hover:bg-[#f2ede5]" : "text-[#c3bcb2] cursor-not-allowed"}">
             ← Prev
         </button>
-
         <span class="text-[#56616a]">Page ${currentPage} of ${totalPages}</span>
-
-        <button id="next-btn" ${nextUrl ? "" : "disabled"}
-            class="rounded-full border border-[#d9d2c8] px-4 py-2 font-medium ${nextUrl ? "text-[#29313a] hover:bg-[#f2ede5]" : "cursor-not-allowed text-[#c3bcb2]"}">
+        <button id="next-btn" ${!nextUrl ? "disabled" : ""}
+            class="rounded-full border border-[#d9d2c8] px-4 py-2 font-medium ${nextUrl ? "text-[#29313a] hover:bg-[#f2ede5]" : "text-[#c3bcb2] cursor-not-allowed"}">
             Next →
-        </button>
-    `;
+        </button>`;
 
-    document.getElementById("prev-btn").onclick = () => prevUrl && loadOfferings(currentPage - 1);
-    document.getElementById("next-btn").onclick = () => nextUrl && loadOfferings(currentPage + 1);
+    document.getElementById("prev-btn")?.addEventListener("click", () => {
+        if (prevUrl) loadOfferings(currentPage - 1);
+    });
+    document.getElementById("next-btn")?.addEventListener("click", () => {
+        if (nextUrl) loadOfferings(currentPage + 1);
+    });
 }
 
-const initialParams = new URLSearchParams(window.location.search);
-const initialCategory = initialParams.get("category") || "";
-const initialOrdering = initialParams.get("ordering") || "-created_at";
+const urlParams = new URLSearchParams(window.location.search);
+const initialCategory = urlParams.get("category");
+if (initialCategory) {
+    document.getElementById("category-filter").value = initialCategory;
+}
 
-searchInput.value = initialParams.get("search") || "";
-categoryDropdown.select(
-    initialCategory,
-    document.querySelector(`[data-value="${initialCategory}"]`)?.dataset.label || "All categories"
-);
-orderingDropdown.select(
-    initialOrdering,
-    document.querySelector(`[data-value="${initialOrdering}"]`)?.dataset.label || "Newest first"
-);
+document.getElementById("search-input").addEventListener("input", debounce(() => loadOfferings(1), 400));
+document.getElementById("category-filter").addEventListener("change", () => loadOfferings(1));
+document.getElementById("ordering-select").addEventListener("change", () => loadOfferings(1));
 
-form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    loadOfferings(1);
-});
+function debounce(fn, delay) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+    };
+}
 
-loadOfferings(Number(initialParams.get("page")) || 1);
+loadOfferings(1);
 </script>
 {% endblock %}
