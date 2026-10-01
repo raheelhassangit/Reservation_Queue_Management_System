@@ -239,9 +239,8 @@ document.getElementById("confirm-btn").addEventListener("click", async () => {
 
     if (res.ok) {
         holdActive = false;
-        clearInterval(holdInterval);
-        window.location.href = "/bookings/mine/";
-        return;
+        const booking = await res.json();
+        window.location.href = `/bookings/${booking.id}/confirmation/`;
     }
 
     const data = await res.json();
