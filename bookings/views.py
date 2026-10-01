@@ -46,3 +46,14 @@ class ConfirmBookingView(APIView):
             request.user, s.validated_data["offering"], s.validated_data["seat_ids"]
         )
         return Response(BookingSerializer(booking).data, status=201)
+    
+class BookingDetailView(generics.RetrieveAPIView):
+    serializer_class = BookingSerializer
+    permission_classes = [IsCustomer]
+
+    def get_queryset(self):
+        return (
+            Booking.objects.filter(customer=self.request.user)
+            .select_related("offering")
+            .prefetch_related("booked_seats__seat")
+        )    
