@@ -24,18 +24,22 @@ function bookingCard(b) {
         dateStyle: "medium", timeStyle: "short"
     });
 
+    const statusBadge = b.offering_active
+        ? ""
+        : `<span class="ml-2 rounded-full bg-[#f8eeee] px-2.5 py-0.5 text-xs font-semibold text-[#8d3034]">No longer active</span>`;
+
     return `
-    <div class="rounded-[1.5rem_.5rem_1.5rem_.5rem] border border-[#d9d2c8] bg-white p-6 flex items-center justify-between gap-4 flex-wrap">
+    <div class="rounded-[1.5rem_.5rem_1.5rem_.5rem] border border-[#d9d2c8] bg-white p-6 flex items-center justify-between gap-4 flex-wrap ${!b.offering_active ? "opacity-75" : ""}">
         <div>
-            <h3 class="text-lg font-semibold text-[#17202a]">${b.offering_name}</h3>
+            <h3 class="text-lg font-semibold text-[#17202a] inline-flex items-center">${b.offering_name}${statusBadge}</h3>
             <p class="mt-1 text-sm text-[#56616a]">Seats: ${seatList}</p>
             <p class="mt-1 text-sm font-semibold text-[#6d3032]">Rs. ${Number(b.total_price).toLocaleString()}</p>
             <p class="mt-1 text-xs text-[#899198]">Booked ${date}</p>
         </div>
-        <a href="/offerings/${b.offering}/"
-           class="rounded-full border border-[#d9d2c8] px-4 py-2 text-sm font-semibold text-[#6d3032] hover:bg-[#f2ede5]">
-            View offering
-        </a>
+        ${b.offering_active
+            ? `<a href="/offerings/${b.offering}/" class="rounded-full border border-[#d9d2c8] px-4 py-2 text-sm font-semibold text-[#6d3032] hover:bg-[#f2ede5]">View offering</a>`
+            : `<span class="rounded-full border border-[#d9d2c8] px-4 py-2 text-sm font-semibold text-[#899198] cursor-not-allowed">Unavailable</span>`
+        }
     </div>`;
 }
 
