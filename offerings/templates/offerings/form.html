@@ -125,6 +125,64 @@
                     </div>
                 </div>
 
+                <div id="bus-route-wrap" class="hidden grid gap-5 sm:grid-cols-2">
+                    <div>
+                        <label for="origin" class="mb-1.5 block text-sm font-medium text-[#29313a]">From</label>
+                        <input id="origin" type="text" placeholder="e.g. Lahore"
+                            class="w-full rounded-[1rem_.4rem_1rem_.4rem] border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35">
+                    </div>
+                    <div>
+                        <label for="destination" class="mb-1.5 block text-sm font-medium text-[#29313a]">To</label>
+                        <input id="destination" type="text" placeholder="e.g. Islamabad"
+                            class="w-full rounded-[.4rem_1rem_.4rem_1rem] border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35">
+                    </div>
+                </div>
+
+                <div id="location-wrap">
+                    <label for="location" class="mb-1.5 block text-sm font-medium text-[#29313a]">Location</label>
+                    <input id="location" type="text" placeholder="e.g. Alhamra Hall, Main Campus Room 204"
+                        class="w-full rounded-xl border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35">
+                </div>
+
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <div>
+                        <label for="starts_at" class="mb-1.5 block text-sm font-medium text-[#29313a]">
+                            Date &amp; time
+                        </label>
+                        <input
+                            id="starts_at"
+                            type="datetime-local"
+                            class="w-full rounded-[1rem_.4rem_1rem_.4rem] border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="price" class="mb-1.5 block text-sm font-medium text-[#29313a]">
+                            Price per seat (Rs.)
+                        </label>
+                        <input
+                            id="price"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder="e.g. 1500"
+                            class="w-full rounded-[.4rem_1rem_.4rem_1rem] border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35"
+                        >
+                    </div>
+                </div>
+
+                <div>
+                    <label for="description" class="mb-1.5 block text-sm font-medium text-[#29313a]">
+                        Description
+                    </label>
+                    <textarea
+                        id="description"
+                        rows="4"
+                        placeholder="Route stops, event agenda, what to bring, etc."
+                        class="w-full rounded-xl border border-[#d9d2c8] px-4 py-3 text-sm outline-none transition placeholder:text-[#899198] focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35"
+                    ></textarea>
+                </div>
+
                 <div class="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label for="total_seats" class="mb-1.5 block text-sm font-medium text-[#29313a]">
@@ -167,7 +225,7 @@
             <p id="error" class="hidden mt-6 rounded-xl bg-[#f8eeee] px-4 py-3 text-sm text-[#8d3034]" aria-live="polite"></p>
 
             <div class="mt-8 flex flex-col-reverse gap-3 border-t border-[#eee9e2] pt-6 sm:flex-row sm:justify-end">
-                <a
+                
                     href="/offerings/dashboard/"
                     class="rounded-full border border-[#d9d2c8] px-5 py-3 text-center text-sm font-semibold text-[#29313a] transition hover:bg-[#f2ede5]"
                 >
@@ -242,6 +300,12 @@ function toggleCustomCategory() {
     if (!isOther) customInput.value = "";
 }
 
+function toggleRouteFields() {
+    const isBus = category.value === "bus";
+    document.getElementById("bus-route-wrap").classList.toggle("hidden", !isBus);
+    document.getElementById("location-wrap").classList.toggle("hidden", isBus);
+}
+
 function chooseCategory(value, label) {
     category.value = value;
     categoryLabel.textContent = label;
@@ -256,6 +320,7 @@ function chooseCategory(value, label) {
     });
 
     toggleCustomCategory();
+    toggleRouteFields();
 }
 
 function formatError(data) {
@@ -350,6 +415,14 @@ async function loadOffering() {
     document.getElementById("name").value = offering.name || "";
     totalSeats.value = offering.total_seats || "";
     document.getElementById("max_seats_per_booking").value = offering.max_seats_per_booking || 1;
+    document.getElementById("origin").value = offering.origin || "";
+    document.getElementById("destination").value = offering.destination || "";
+    document.getElementById("location").value = offering.location || "";
+    document.getElementById("price").value = offering.price || "";
+    document.getElementById("description").value = offering.description || "";
+    if (offering.starts_at) {
+        document.getElementById("starts_at").value = offering.starts_at.slice(0, 16);
+    }
 
     setEditCategory(offering);
 }
@@ -362,7 +435,13 @@ form.addEventListener("submit", async (event) => {
         name: document.getElementById("name").value.trim(),
         category: category.value,
         custom_category: category.value === "other" ? customInput.value.trim() : "",
-        max_seats_per_booking: Number(document.getElementById("max_seats_per_booking").value)
+        max_seats_per_booking: Number(document.getElementById("max_seats_per_booking").value),
+        location: category.value === "bus" ? "" : document.getElementById("location").value.trim(),
+        origin: category.value === "bus" ? document.getElementById("origin").value.trim() : "",
+        destination: category.value === "bus" ? document.getElementById("destination").value.trim() : "",
+        starts_at: document.getElementById("starts_at").value || null,
+        price: document.getElementById("price").value || 0,
+        description: document.getElementById("description").value.trim()
     };
 
     if (!isEdit) {
@@ -394,6 +473,7 @@ form.addEventListener("submit", async (event) => {
 });
 
 toggleCustomCategory();
+toggleRouteFields();
 loadOffering();
 </script>
 {% endblock %}

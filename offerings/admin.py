@@ -4,9 +4,9 @@ from .models import Offering, Seat
 
 @admin.register(Offering)
 class OfferingAdmin(admin.ModelAdmin):
-    list_display = ("name", "organization", "category", "total_seats", "max_seats_per_booking")
+    list_display = ("name", "organization", "category", "origin", "destination", "location", "price", "total_seats")
     list_filter = ("category", "organization")
-    search_fields = ("name", "organization__name")
+    search_fields = ("name", "organization__name", "origin", "destination", "location")
     list_select_related = ("organization",)
 
 
