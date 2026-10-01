@@ -46,7 +46,7 @@ class OfferingListSerializer(serializers.ModelSerializer):
         fields = [
             "id", "name", "category_display", "organization_name",
             "total_seats", "available_seats", "max_seats_per_booking",
-            "location", "origin", "destination", "starts_at", "price",
+            "location", "origin", "destination", "starts_at", "price", "is_active"
         ]
 
     def get_available_seats(self, obj):
