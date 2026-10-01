@@ -8,13 +8,17 @@ from .models import Booking, BookingSeat
 class BookingSerializer(serializers.ModelSerializer):
     offering_name = serializers.CharField(source="offering.name", read_only=True)
     seats = serializers.SerializerMethodField()
+    total_price = serializers.SerializerMethodField()
 
     class Meta:
         model = Booking
-        fields = ["id", "offering", "offering_name", "seats", "created_at"]
+        fields = ["id", "offering", "offering_name", "seats", "total_price", "created_at"]
 
     def get_seats(self, obj):
         return [bs.seat.seat_number for bs in obj.booked_seats.all()]
+
+    def get_total_price(self, obj):
+        return obj.offering.price * obj.booked_seats.count()
     
 class SeatSelectionSerializer(serializers.Serializer):
     offering = serializers.PrimaryKeyRelatedField(queryset=Offering.objects.all())

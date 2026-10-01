@@ -47,6 +47,10 @@ async function loadBooking() {
             <span class="text-[#56616a]">Seats</span>
             <span class="font-semibold text-[#17202a]">${b.seats.join(", ")}</span>
         </div>
+        <div class="flex justify-between py-2 border-b border-[#e3dccf] text-sm">
+            <span class="text-[#56616a]">Total paid</span>
+            <span class="font-semibold text-[#17202a]">Rs. ${Number(b.total_price).toLocaleString()}</span>
+        </div>
         <div class="flex justify-between py-2 text-sm">
             <span class="text-[#56616a]">Booked on</span>
             <span class="font-semibold text-[#17202a]">${date}</span>

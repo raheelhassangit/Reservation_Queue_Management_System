@@ -29,6 +29,7 @@ function bookingCard(b) {
         <div>
             <h3 class="text-lg font-semibold text-[#17202a]">${b.offering_name}</h3>
             <p class="mt-1 text-sm text-[#56616a]">Seats: ${seatList}</p>
+            <p class="mt-1 text-sm font-semibold text-[#6d3032]">Rs. ${Number(b.total_price).toLocaleString()}</p>
             <p class="mt-1 text-xs text-[#899198]">Booked ${date}</p>
         </div>
         <a href="/offerings/${b.offering}/"
