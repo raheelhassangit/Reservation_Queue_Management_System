@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from .models import Booking
 from .serializers import BookingSerializer, SeatSelectionSerializer
 from .services import confirm_booking, hold_seats
+from .services import confirm_booking, hold_seats, release_hold
 
 
 class IsCustomer(permissions.BasePermission):
@@ -57,3 +58,14 @@ class BookingDetailView(generics.RetrieveAPIView):
             .select_related("offering")
             .prefetch_related("booked_seats__seat")
         )    
+    
+class ReleaseHoldView(APIView):
+    permission_classes = [IsCustomer]
+
+    def post(self, request):
+        s = SeatSelectionSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        released = release_hold(
+            request.user, s.validated_data["offering"], s.validated_data["seat_ids"]
+        )
+        return Response({"released": released})    

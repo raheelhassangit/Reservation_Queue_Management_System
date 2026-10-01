@@ -21,9 +21,170 @@
     </style>
 
     {% block extra_head %}{% endblock %}
+    <script>
+    document.documentElement.classList.add("js");
+    </script>
+
+    <style>
+        #page-loader {
+            display: none;
+        }
+
+        .js #page-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: grid;
+            place-items: center;
+            background: rgba(247, 244, 239, .78);
+            backdrop-filter: blur(9px);
+            -webkit-backdrop-filter: blur(9px);
+            opacity: 1;
+            transition: opacity .45s ease, visibility .45s ease;
+        }
+
+        #page-loader.is-hidden {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-content {
+            display: grid;
+            justify-items: center;
+        }
+
+        .loader-spinner {
+            position: relative;
+            display: grid;
+            height: 96px;
+            width: 96px;
+            place-items: center;
+        }
+
+        .loader-spinner::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border: 3px solid rgba(109, 48, 50, .18);
+            border-top-color: #6d3032;
+            border-right-color: #d8b46c;
+            border-radius: 50%;
+            animation: reservex-spin 1s linear infinite;
+        }
+
+        .loader-spinner::after {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            border: 1px dashed rgba(109, 48, 50, .38);
+            border-radius: 45% 55% 52% 48% / 42% 42% 58% 58%;
+            animation: reservex-spin 4s linear infinite reverse;
+        }
+
+        .loader-logo {
+            z-index: 1;
+            height: 58px;
+            width: 58px;
+            border-radius: 50%;
+            border: 2px solid #f7f4ef;
+            object-fit: cover;
+            box-shadow: 0 6px 18px rgba(27, 36, 45, .18);
+        }
+
+        .loader-message {
+            position: relative;
+            width: min(290px, calc(100vw - 48px));
+            margin-top: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(109, 48, 50, .2);
+            border-radius: 16px 5px 16px 5px;
+            background: rgba(255, 253, 249, .72);
+            padding: 14px 16px 13px;
+            text-align: left;
+            box-shadow: 0 10px 26px rgba(27, 36, 45, .08);
+        }
+
+        .loader-message::before,
+        .loader-message::after {
+            content: "";
+            position: absolute;
+            left: -5px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(247, 244, 239, .9);
+        }
+
+        .loader-message::before { top: 25px; }
+        .loader-message::after { bottom: 12px; }
+
+        .loader-route {
+            display: block;
+            color: #975b3d;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .15em;
+        }
+
+        #loader-status {
+            display: block;
+            min-height: 22px;
+            margin-top: 5px;
+            color: #1b242d;
+            font-size: 15px;
+            font-weight: 700;
+            transition: opacity .2s ease, transform .2s ease;
+        }
+
+        #loader-status.is-changing {
+            transform: translateY(4px);
+            opacity: 0;
+        }
+
+        .loader-progress {
+            display: block;
+            height: 2px;
+            margin-top: 11px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: rgba(109, 48, 50, .12);
+        }
+
+        .loader-progress i {
+            display: block;
+            width: 42%;
+            height: 100%;
+            border-radius: inherit;
+            background: #d8b46c;
+            animation: loader-progress 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loader-progress {
+            0% { transform: translateX(-120%); }
+            100% { transform: translateX(350%); }
+        }
+    </style>
 </head>
 
 <body class="{% block body_class %}min-h-screen bg-[#f7f4ef] font-sans text-[#17202a]{% endblock %}">
+    <div id="page-loader" role="status" aria-live="polite" aria-label="Loading ReserveX AI">
+        <div class="loader-content">
+            <div class="loader-spinner">
+                <img
+                    src="{% static 'images/logo.jpg' %}"
+                    alt="ReserveX AI"
+                    class="loader-logo"
+                >
+            </div>
+
+            <div class="loader-message">
+                <span class="loader-route">RESERVEX AI · LIVE QUEUE</span>
+                <strong id="loader-status" aria-live="polite">Checking available places</strong>
+                <span class="loader-progress"><i></i></span>
+            </div>
+        </div>
+    </div>
     <nav class="{% block nav_class %}relative z-20 border-b border-[#e2dcd4] bg-[#fffdf9]{% endblock %}">
         <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
             <a href="/" class="flex items-center gap-3" aria-label="ReserveX AI home">
@@ -177,7 +338,83 @@
 
         updateNavForAuth();
     </script>
+    <script>
+        const pageLoader = document.getElementById("page-loader");
+        let loaderStartedAt = performance.now();
 
+        function showLoader() {
+            if (!pageLoader) return;
+            loaderStartedAt = performance.now();
+            pageLoader.classList.remove("is-hidden");
+        }
+
+        function hideLoader() {
+            if (!pageLoader) return;
+
+            const minimumVisibleTime = 650;
+            const elapsed = performance.now() - loaderStartedAt;
+            const remainingTime = Math.max(0, minimumVisibleTime - elapsed);
+
+            window.setTimeout(() => {
+                pageLoader.classList.add("is-hidden");
+            }, remainingTime);
+        }
+
+        window.addEventListener("load", hideLoader);
+
+        window.addEventListener("pageshow", () => {
+            pageLoader?.classList.add("is-hidden");
+        });
+
+        document.addEventListener("click", (event) => {
+            const link = event.target.closest("a[href]");
+
+            if (
+                !link ||
+                event.ctrlKey ||
+                event.metaKey ||
+                event.shiftKey ||
+                event.altKey ||
+                link.target === "_blank" ||
+                link.href.includes("#") ||
+                link.dataset.noLoader !== undefined
+            ) {
+                return;
+            }
+
+            const destination = new URL(link.href, window.location.href);
+
+            if (
+                destination.origin === window.location.origin &&
+                destination.pathname !== window.location.pathname
+            ) {
+                showLoader();
+            }
+        });
+    </script>
+    <script>
+        const loaderStatus = document.getElementById("loader-status");
+        const loaderMessages = [
+            "Checking available places",
+            "Reading the reservation queue",
+            "Making room for your plans",
+            "Preparing your next stop"
+        ];
+
+        let loaderMessageIndex = 0;
+
+        window.setInterval(() => {
+            if (!loaderStatus) return;
+
+            loaderStatus.classList.add("is-changing");
+
+            window.setTimeout(() => {
+                loaderMessageIndex = (loaderMessageIndex + 1) % loaderMessages.length;
+                loaderStatus.textContent = loaderMessages[loaderMessageIndex];
+                loaderStatus.classList.remove("is-changing");
+            }, 200);
+        }, 1500);
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

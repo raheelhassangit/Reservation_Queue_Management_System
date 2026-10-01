@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import BookingListView, HoldSeatsView, ConfirmBookingView, BookingDetailView
+from .views import BookingListView, HoldSeatsView, ConfirmBookingView, ReleaseHoldView
 
 urlpatterns = [
     path("", BookingListView.as_view(), name="booking-list"),
