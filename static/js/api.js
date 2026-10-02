@@ -32,22 +32,28 @@ async function refreshAccessToken() {
 }
 
 async function apiFetch(path, options = {}) {
-  let token = getAccessToken();
-  const doFetch = (tok) => {
-    const headers = { "Content-Type": "application/json", ...options.headers };
-    if (tok) headers["Authorization"] = "Bearer " + tok;
-    return fetch(API_BASE + path, { ...options, headers });
-  };
+    let token = getAccessToken();
+    const doFetch = (tok) => {
+        const headers = { "Content-Type": "application/json", ...options.headers };
+        if (tok) headers["Authorization"] = "Bearer " + tok;
+        return fetch(API_BASE + path, { ...options, headers });
+    };
 
-  let res = await doFetch(token);
+    let res = await doFetch(token);
 
-  if (res.status === 401) {
-    const newToken = await refreshAccessToken();
-    if (!newToken) {
-      logout();
-      throw new Error("Session expired");
+    if (res.status === 401) {
+        const newToken = await refreshAccessToken();
+        if (!newToken) {
+            logout();
+            throw new Error("Session expired");
+        }
+        res = await doFetch(newToken);
     }
-    res = await doFetch(newToken);
-  }
-  return res;
+
+    if (res.status === 429) {
+        const retryAfter = res.headers.get("Retry-After");
+        alert(`Too many requests — please wait ${retryAfter || "a moment"} and try again.`);
+    }
+
+    return res;
 }
