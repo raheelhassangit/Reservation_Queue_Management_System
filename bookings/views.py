@@ -10,6 +10,7 @@ from .services import confirm_booking, hold_seats, release_hold
 from .models import Waitlist
 from .serializers import JoinWaitlistSerializer, WaitlistSerializer
 from .services import join_waitlist
+from .throttles import HoldRateThrottle
 
 class IsCustomer(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -30,6 +31,7 @@ class BookingListView(generics.ListAPIView):
 
 class HoldSeatsView(APIView):
     permission_classes = [IsCustomer]
+    throttle_classes = [HoldRateThrottle]
 
     def post(self, request):
         s = SeatSelectionSerializer(data=request.data)

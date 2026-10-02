@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from accounts.views import ThrottledTokenObtainPairView
 
 
 urlpatterns = [
@@ -36,6 +37,9 @@ urlpatterns = [
     path("", include("accounts.urls_web")),
     path("offerings/", include("offerings.urls_web")),
     path("bookings/", include("bookings.urls_web")),
+    
+    path("api/token/", ThrottledTokenObtainPairView.as_view(), name="token_obtain_pair"),
+
 
 ]
 
