@@ -24,3 +24,13 @@ class BookingSeat(models.Model):
     
     def __str__(self):
         return f"{self.booking_id} -> {self.seat}"
+    
+class Waitlist(models.Model):
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="waitlist_entries")
+    offering = models.ForeignKey(Offering, on_delete=models.CASCADE, related_name="waitlist_entries")
+    seats_wanted = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    notified_at = models.DateTimeField(null=True, blank=True)
+    class Meta:
+        ordering = ["created_at"]
+        unique_together = ("customer", "offering")    

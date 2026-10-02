@@ -7,6 +7,7 @@ from rest_framework.exceptions import ValidationError
 
 from offerings.models import Seat
 from .models import Booking, BookingSeat
+from .models import Waitlist
 
 
 def _lock_seats(offering, seat_ids):
@@ -67,3 +68,19 @@ def release_hold(user, offering, seat_ids):
             status=Seat.Status.AVAILABLE, held_by=None, held_until=None
         )
     return len(to_release)
+
+
+def join_waitlist(user, offering, seats_wanted):
+    available = offering.seats.filter(status=Seat.Status.AVAILABLE).count()
+    if available > 0:
+        raise ValidationError("Seats are currently available — no need to join the waitlist.")
+    if offering.is_expired or not offering.is_active:
+        raise ValidationError("This offering is no longer accepting reservations.")
+    if seats_wanted > offering.max_seats_per_booking:
+        raise ValidationError(f"Max {offering.max_seats_per_booking} seat(s) per booking.")
+    entry, created = Waitlist.objects.get_or_create(
+        customer=user, offering=offering, defaults={"seats_wanted": seats_wanted}
+    )
+    if not created:
+        raise ValidationError("You're already on the waitlist for this offering.")
+    return entry

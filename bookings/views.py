@@ -7,6 +7,9 @@ from .serializers import BookingSerializer, SeatSelectionSerializer
 from .services import confirm_booking, hold_seats
 from .services import confirm_booking, hold_seats, release_hold
 
+from .models import Waitlist
+from .serializers import JoinWaitlistSerializer, WaitlistSerializer
+from .services import join_waitlist
 
 class IsCustomer(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -69,3 +72,24 @@ class ReleaseHoldView(APIView):
             request.user, s.validated_data["offering"], s.validated_data["seat_ids"]
         )
         return Response({"released": released})    
+
+
+class JoinWaitlistView(APIView):
+    permission_classes = [IsCustomer]
+    def post(self, request):
+        s = JoinWaitlistSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        entry = join_waitlist(request.user, s.validated_data["offering"], s.validated_data["seats_wanted"])
+        return Response(WaitlistSerializer(entry).data, status=201)
+
+class MyWaitlistView(generics.ListAPIView):
+    serializer_class = WaitlistSerializer
+    permission_classes = [IsCustomer]
+    def get_queryset(self):
+        return Waitlist.objects.filter(customer=self.request.user).select_related("offering")
+
+class LeaveWaitlistView(APIView):
+    permission_classes = [IsCustomer]
+    def post(self, request, pk):
+        Waitlist.objects.filter(id=pk, customer=request.user).delete()
+        return Response({"ok": True})

@@ -26,140 +26,60 @@
     </script>
 
     <style>
-        #page-loader {
-            display: none;
-        }
-
+        #page-loader { display: none; }
         .js #page-loader {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            display: grid;
-            place-items: center;
+            position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center;
             background: rgba(247, 244, 239, .78);
-            backdrop-filter: blur(9px);
-            -webkit-backdrop-filter: blur(9px);
-            opacity: 1;
-            transition: opacity .45s ease, visibility .45s ease;
+            backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px);
+            opacity: 1; transition: opacity .45s ease, visibility .45s ease;
         }
-
-        #page-loader.is-hidden {
-            visibility: hidden;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .loader-content {
-            display: grid;
-            justify-items: center;
-        }
-
-        .loader-spinner {
-            position: relative;
-            display: grid;
-            height: 96px;
-            width: 96px;
-            place-items: center;
-        }
-
+        #page-loader.is-hidden { visibility: hidden; opacity: 0; pointer-events: none; }
+        .loader-content { display: grid; justify-items: center; }
+        .loader-spinner { position: relative; display: grid; height: 96px; width: 96px; place-items: center; }
         .loader-spinner::before {
-            content: "";
-            position: absolute;
-            inset: 0;
+            content: ""; position: absolute; inset: 0;
             border: 3px solid rgba(109, 48, 50, .18);
-            border-top-color: #6d3032;
-            border-right-color: #d8b46c;
-            border-radius: 50%;
-            animation: reservex-spin 1s linear infinite;
+            border-top-color: #6d3032; border-right-color: #d8b46c;
+            border-radius: 50%; animation: reservex-spin 1s linear infinite;
         }
-
         .loader-spinner::after {
-            content: "";
-            position: absolute;
-            inset: 8px;
+            content: ""; position: absolute; inset: 8px;
             border: 1px dashed rgba(109, 48, 50, .38);
             border-radius: 45% 55% 52% 48% / 42% 42% 58% 58%;
             animation: reservex-spin 4s linear infinite reverse;
         }
-
         .loader-logo {
-            z-index: 1;
-            height: 58px;
-            width: 58px;
-            border-radius: 50%;
-            border: 2px solid #f7f4ef;
-            object-fit: cover;
+            z-index: 1; height: 58px; width: 58px; border-radius: 50%;
+            border: 2px solid #f7f4ef; object-fit: cover;
             box-shadow: 0 6px 18px rgba(27, 36, 45, .18);
         }
-
         .loader-message {
-            position: relative;
-            width: min(290px, calc(100vw - 48px));
-            margin-top: 18px;
-            overflow: hidden;
-            border: 1px solid rgba(109, 48, 50, .2);
-            border-radius: 16px 5px 16px 5px;
-            background: rgba(255, 253, 249, .72);
-            padding: 14px 16px 13px;
-            text-align: left;
+            position: relative; width: min(290px, calc(100vw - 48px)); margin-top: 18px;
+            overflow: hidden; border: 1px solid rgba(109, 48, 50, .2);
+            border-radius: 16px 5px 16px 5px; background: rgba(255, 253, 249, .72);
+            padding: 14px 16px 13px; text-align: left;
             box-shadow: 0 10px 26px rgba(27, 36, 45, .08);
         }
-
-        .loader-message::before,
-        .loader-message::after {
-            content: "";
-            position: absolute;
-            left: -5px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(247, 244, 239, .9);
+        .loader-message::before, .loader-message::after {
+            content: ""; position: absolute; left: -5px; width: 10px; height: 10px;
+            border-radius: 50%; background: rgba(247, 244, 239, .9);
         }
-
         .loader-message::before { top: 25px; }
         .loader-message::after { bottom: 12px; }
-
-        .loader-route {
-            display: block;
-            color: #975b3d;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: .15em;
-        }
-
+        .loader-route { display: block; color: #975b3d; font-size: 10px; font-weight: 700; letter-spacing: .15em; }
         #loader-status {
-            display: block;
-            min-height: 22px;
-            margin-top: 5px;
-            color: #1b242d;
-            font-size: 15px;
-            font-weight: 700;
-            transition: opacity .2s ease, transform .2s ease;
+            display: block; min-height: 22px; margin-top: 5px; color: #1b242d;
+            font-size: 15px; font-weight: 700; transition: opacity .2s ease, transform .2s ease;
         }
-
-        #loader-status.is-changing {
-            transform: translateY(4px);
-            opacity: 0;
-        }
-
+        #loader-status.is-changing { transform: translateY(4px); opacity: 0; }
         .loader-progress {
-            display: block;
-            height: 2px;
-            margin-top: 11px;
-            overflow: hidden;
-            border-radius: 999px;
-            background: rgba(109, 48, 50, .12);
+            display: block; height: 2px; margin-top: 11px; overflow: hidden;
+            border-radius: 999px; background: rgba(109, 48, 50, .12);
         }
-
         .loader-progress i {
-            display: block;
-            width: 42%;
-            height: 100%;
-            border-radius: inherit;
-            background: #d8b46c;
-            animation: loader-progress 1.5s ease-in-out infinite;
+            display: block; width: 42%; height: 100%; border-radius: inherit;
+            background: #d8b46c; animation: loader-progress 1.5s ease-in-out infinite;
         }
-
         @keyframes loader-progress {
             0% { transform: translateX(-120%); }
             100% { transform: translateX(350%); }
@@ -171,13 +91,8 @@
     <div id="page-loader" role="status" aria-live="polite" aria-label="Loading ReserveX AI">
         <div class="loader-content">
             <div class="loader-spinner">
-                <img
-                    src="{% static 'images/logo.jpg' %}"
-                    alt="ReserveX AI"
-                    class="loader-logo"
-                >
+                <img src="{% static 'images/logo.jpg' %}" alt="ReserveX AI" class="loader-logo">
             </div>
-
             <div class="loader-message">
                 <span class="loader-route">RESERVEX AI · LIVE QUEUE</span>
                 <strong id="loader-status" aria-live="polite">Checking available places</strong>
@@ -185,68 +100,85 @@
             </div>
         </div>
     </div>
+
     <nav class="{% block nav_class %}relative z-20 border-b border-[#e2dcd4] bg-[#fffdf9]{% endblock %}">
         <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
             <a href="/" class="flex items-center gap-3" aria-label="ReserveX AI home">
-                <img
-                    src="{% static 'images/logo.jpg' %}"
-                    alt="ReserveX AI"
-                    class="h-10 w-10 rounded-full object-cover shadow-sm"
-                >
-                <span class="{% block brand_class %}font-semibold tracking-tight text-[#17202a]{% endblock %}">
-                    ReserveX AI
-                </span>
+                <img src="{% static 'images/logo.jpg' %}" alt="ReserveX AI" class="h-10 w-10 rounded-full object-cover shadow-sm">
+                <span class="{% block brand_class %}font-semibold tracking-tight text-[#17202a]{% endblock %}">ReserveX AI</span>
             </a>
 
-            <div class="hidden items-center gap-7 text-sm md:flex">
-                <a href="/" class="{% block nav_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
-                    Home
-                </a>
-                <a href="/#reservations" class="{% block browse_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
-                    Browse
-                </a>
-                <a href="/#about" class="{% block about_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
-                    About
+            <div class="hidden items-center gap-6 text-sm md:flex">
+                <a href="/" class="{% block nav_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">Home</a>
+                <a href="/offerings/" class="{% block browse_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">Browse</a>
+                <a href="/#about" class="{% block about_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">About</a>
+
+                <a id="nav-waitlist-link" href="/bookings/waitlist/mine/" data-auth-only data-customer-only style="display:none"
+                   class="{% block waitlist_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
+                    My Waitlist
                 </a>
 
-                <a href="/login/" data-guest-only
-                   class="{% block signin_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
-                    Sign in
-                </a>
-                <a href="/register/" data-guest-only
-                   class="{% block account_link_class %}rounded-full bg-[#6d3032] px-4 py-2 font-medium text-white transition hover:-translate-y-0.5 hover:bg-[#4a1f25]{% endblock %}">
-                    Create account
-                </a>
+                <a href="/login/" data-guest-only class="{% block signin_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">Sign in</a>
+                <a href="/register/" data-guest-only class="{% block account_link_class %}rounded-full bg-[#6d3032] px-4 py-2 font-medium text-white transition hover:-translate-y-0.5 hover:bg-[#4a1f25]{% endblock %}">Create account</a>
 
-                <a id="nav-role-link" href="#" data-auth-only style="display:none"
-                   class="{% block dashboard_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">
-                    Dashboard
-                </a>
-                <a id="nav-logout-link" href="#" data-auth-only style="display:none"
-                   class="{% block logout_link_class %}rounded-full bg-[#6d3032] px-4 py-2 font-medium text-white transition hover:-translate-y-0.5 hover:bg-[#4a1f25]{% endblock %}">
-                    Sign out
-                </a>
+                <div id="notif-bell" data-auth-only style="display:none" class="relative">
+                    <button id="notif-trigger" type="button" class="relative grid h-9 w-9 place-items-center rounded-full {% block notif_icon_class %}text-[#6d3032] transition hover:bg-[#f2ede5]{% endblock %}" aria-label="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                            <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span id="notif-count" class="hidden absolute -top-0.5 -right-0.5 h-4 min-w-[16px] rounded-full bg-[#8d3034] px-1 text-[10px] font-semibold leading-4 text-white text-center"></span>
+                    </button>
+                    <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto rounded-[1rem_.4rem_1rem_.4rem] border border-[#d9d2c8] bg-white shadow-[0_18px_40px_rgba(28,35,42,.14)] z-40">
+                        <div class="border-b border-[#eee9e2] px-4 py-3">
+                            <p class="text-sm font-semibold text-[#17202a]">Notifications</p>
+                        </div>
+                        <div id="notif-items"></div>
+                    </div>
+                </div>
+
+                <a id="nav-role-link" href="#" data-auth-only style="display:none" class="{% block dashboard_link_class %}text-[#4e5961] transition hover:text-[#6d3032]{% endblock %}">Dashboard</a>
+                <a id="nav-logout-link" href="#" data-auth-only style="display:none" class="{% block logout_link_class %}rounded-full bg-[#6d3032] px-4 py-2 font-medium text-white transition hover:-translate-y-0.5 hover:bg-[#4a1f25]{% endblock %}">Sign out</a>
             </div>
 
-            <details class="relative md:hidden">
-                <summary class="cursor-pointer list-none rounded-full border px-4 py-2 text-sm font-medium [&::-webkit-details-marker]:hidden {% block mobile_menu_class %}border-[#cfc3b4] text-[#29313a]{% endblock %}">
-                    Menu
-                </summary>
-
-                <div class="absolute right-0 top-12 w-48 rounded-[1.25rem_0.4rem_1.25rem_0.4rem] border border-[#ded6cc] bg-[#fffdf9] p-3 text-sm shadow-[0_18px_40px_rgba(28,35,42,.14)]">
-                    <a href="/" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Home</a>
-                    <a href="/#reservations" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Browse</a>
-                    <a href="/#about" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">About</a>
-
-                    <a href="/login/" data-guest-only class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Sign in</a>
-                    <a href="/register/" data-guest-only class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Create account</a>
-
-                    <a id="nav-role-link-mobile" href="#" data-auth-only style="display:none"
-                       class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Dashboard</a>
-                    <a id="nav-logout-link-mobile" href="#" data-auth-only style="display:none"
-                       class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Sign out</a>
+            <div class="flex items-center gap-2 md:hidden">
+                <div id="notif-bell-mobile" data-auth-only style="display:none" class="relative">
+                    <button id="notif-trigger-mobile" type="button" class="relative grid h-10 w-10 place-items-center rounded-full border border-[#cfc3b4] text-[]" aria-label="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                            <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span id="notif-count-mobile" class="hidden absolute -top-0.5 -right-0.5 h-4 min-w-[16px] rounded-full bg-[#8d3034] px-1 text-[10px] font-semibold leading-4 text-white text-center"></span>
+                    </button>
+                    <div id="notif-dropdown-mobile" class="hidden fixed left-4 right-4 top-20 max-h-[70vh] overflow-y-auto rounded-[1rem_.4rem_1rem_.4rem] border border-[#d9d2c8] bg-white shadow-[0_18px_40px_rgba(28,35,42,.14)] z-50">
+                        <div class="border-b border-[#eee9e2] px-4 py-3">
+                            <p class="text-sm font-semibold text-[#17202a]">Notifications</p>
+                        </div>
+                        <div id="notif-items-mobile"></div>
+                    </div>
                 </div>
-            </details>
+
+                <details class="relative">
+                    <summary class="cursor-pointer list-none rounded-full border px-4 py-2 text-sm font-medium [&::-webkit-details-marker]:hidden {% block mobile_menu_class %}border-[#cfc3b4] text-[#29313a]{% endblock %}">
+                        Menu
+                    </summary>
+
+                    <div class="absolute right-0 top-12 w-56 rounded-[1.25rem_0.4rem_1.25rem_0.4rem] border border-[#ded6cc] bg-[#fffdf9] p-3 text-sm shadow-[0_18px_40px_rgba(28,35,42,.14)]">
+                        <a href="/" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Home</a>
+                        <a href="/offerings/" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Browse</a>
+                        <a href="/#about" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">About</a>
+
+                        <a id="nav-waitlist-link-mobile" href="/bookings/waitlist/mine/" data-auth-only data-customer-only style="display:none"
+                           class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">My Waitlist</a>
+
+                        <a href="/login/" data-guest-only class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Sign in</a>
+                        <a href="/register/" data-guest-only class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Create account</a>
+
+                        <a id="nav-role-link-mobile" href="#" data-auth-only style="display:none" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Dashboard</a>
+                        <a id="nav-logout-link-mobile" href="#" data-auth-only style="display:none" class="block rounded-lg px-3 py-2 font-semibold text-[#6d3032] hover:bg-[#f2ede5]">Sign out</a>
+                    </div>
+                </details>
+            </div>
         </div>
     </nav>
 
@@ -261,15 +193,13 @@
                     <img src="{% static 'images/logo.jpg' %}" alt="" class="h-9 w-9 rounded-full object-cover">
                     <span class="font-semibold">ReserveX AI</span>
                 </a>
-                <p class="mt-4 max-w-xs text-sm leading-6">
-                    A clear, dependable way to discover and confirm reservations.
-                </p>
+                <p class="mt-4 max-w-xs text-sm leading-6">A clear, dependable way to discover and confirm reservations.</p>
             </div>
 
             <div>
                 <h2 class="text-sm font-semibold text-white">Explore</h2>
                 <ul class="mt-4 space-y-3 text-sm">
-                    <li><a href="/#reservations" class="transition hover:text-white">Browse reservations</a></li>
+                    <li><a href="/offerings/" class="transition hover:text-white">Browse reservations</a></li>
                     <li><a href="/#about" class="transition hover:text-white">About ReserveX AI</a></li>
                     <li><a href="/#providers" class="transition hover:text-white">For providers</a></li>
                 </ul>
@@ -281,19 +211,37 @@
                     <li data-guest-only><a href="/login/" class="transition hover:text-white">Sign in</a></li>
                     <li data-guest-only><a href="/register/" class="transition hover:text-white">Create account</a></li>
                     <li data-auth-only style="display:none"><a href="#" id="footer-role-link" class="transition hover:text-white">Dashboard</a></li>
+                    <li data-auth-only data-customer-only style="display:none"><a href="/bookings/waitlist/mine/" class="transition hover:text-white">My Waitlist</a></li>
                     <li data-auth-only style="display:none"><a href="#" id="footer-logout-link" class="transition hover:text-white">Sign out</a></li>
                 </ul>
             </div>
         </div>
 
         <div class="border-t border-white/10 px-5 py-5 text-center text-xs text-white/45">
-            © {% now "Y" %} ReserveX AI. All rights reserved.
-            Developed and Designed by Raheel Hassan
+            © {% now "Y" %} ReserveX AI. All rights reserved. Developed and Designed by Raheel Hassan
         </div>
     </footer>
 
     <script src="{% static 'js/api.js' %}"></script>
     <script>
+        function renderNotifList(containerId, notifs) {
+            const el = document.getElementById(containerId);
+            if (!notifs.length) {
+                el.innerHTML = '<p class="px-4 py-6 text-center text-sm text-[#899198]">No notifications right now</p>';
+                return;
+            }
+            el.innerHTML = notifs.slice(0, 8).map(n => `
+                <a href="${n.link || '#'}" data-notif-id="${n.id}"
+                   class="block border-b border-[#f2ede5] px-4 py-3 text-sm transition hover:bg-[#f5eee4] last:border-b-0 ${n.is_read ? "text-[#899198]" : "font-semibold text-[#17202a]"}">
+                    ${n.message}
+                </a>`).join("");
+            el.querySelectorAll("a").forEach(a => {
+                a.addEventListener("click", () => {
+                    apiFetch(`/notifications/${a.dataset.notifId}/read/`, { method: "POST" });
+                });
+            });
+        }
+
         async function updateNavForAuth() {
             const loggedIn = !!getAccessToken();
 
@@ -306,6 +254,43 @@
 
             if (!loggedIn) return;
 
+            async function loadNotifications() {
+                const res = await apiFetch("/notifications/");
+                if (!res.ok) return;
+                const notifs = await res.json();
+                const unread = notifs.filter(n => !n.is_read);
+
+                [document.getElementById("notif-count"), document.getElementById("notif-count-mobile")].forEach(el => {
+                    if (!el) return;
+                    if (unread.length > 0) {
+                        el.textContent = unread.length;
+                        el.classList.remove("hidden");
+                    } else {
+                        el.classList.add("hidden");
+                    }
+                });
+
+                renderNotifList("notif-items", notifs);
+                renderNotifList("notif-items-mobile", notifs);
+            }
+            loadNotifications();
+
+            document.getElementById("notif-trigger")?.addEventListener("click", () => {
+                document.getElementById("notif-dropdown").classList.toggle("hidden");
+            });
+            document.getElementById("notif-trigger-mobile")?.addEventListener("click", () => {
+                document.querySelector("details")?.removeAttribute("open");
+                document.getElementById("notif-dropdown-mobile").classList.toggle("hidden");
+            });
+            document.addEventListener("click", (e) => {
+                if (!document.getElementById("notif-bell")?.contains(e.target)) {
+                    document.getElementById("notif-dropdown")?.classList.add("hidden");
+                }
+                if (!document.getElementById("notif-bell-mobile")?.contains(e.target)) {
+                    document.getElementById("notif-dropdown-mobile")?.classList.add("hidden");
+                }
+            });
+
             let role = "customer";
             try {
                 const res = await apiFetch("/accounts/me/");
@@ -316,6 +301,10 @@
             } catch (e) {
                 return;
             }
+
+            document.querySelectorAll('[data-customer-only]').forEach(el => {
+                el.style.display = role === "customer" ? "" : "none";
+            });
 
             const dashboardHref = role === "provider" ? "/offerings/dashboard/" : "/bookings/mine/";
             const dashboardLabel = role === "provider" ? "Dashboard" : "My Bookings";
@@ -329,9 +318,7 @@
                 if (el) { el.href = href; el.textContent = label; }
             });
 
-            [
-                "nav-logout-link", "nav-logout-link-mobile", "footer-logout-link",
-            ].forEach(id => {
+            ["nav-logout-link", "nav-logout-link-mobile", "footer-logout-link"].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.addEventListener("click", (e) => { e.preventDefault(); logout(); });
             });
@@ -351,44 +338,29 @@
 
         function hideLoader() {
             if (!pageLoader) return;
-
             const minimumVisibleTime = 650;
             const elapsed = performance.now() - loaderStartedAt;
             const remainingTime = Math.max(0, minimumVisibleTime - elapsed);
-
             window.setTimeout(() => {
                 pageLoader.classList.add("is-hidden");
             }, remainingTime);
         }
 
         window.addEventListener("load", hideLoader);
-
         window.addEventListener("pageshow", () => {
             pageLoader?.classList.add("is-hidden");
         });
 
         document.addEventListener("click", (event) => {
             const link = event.target.closest("a[href]");
-
             if (
-                !link ||
-                event.ctrlKey ||
-                event.metaKey ||
-                event.shiftKey ||
-                event.altKey ||
-                link.target === "_blank" ||
-                link.href.includes("#") ||
-                link.dataset.noLoader !== undefined
+                !link || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey ||
+                link.target === "_blank" || link.href.includes("#") || link.dataset.noLoader !== undefined
             ) {
                 return;
             }
-
             const destination = new URL(link.href, window.location.href);
-
-            if (
-                destination.origin === window.location.origin &&
-                destination.pathname !== window.location.pathname
-            ) {
+            if (destination.origin === window.location.origin && destination.pathname !== window.location.pathname) {
                 showLoader();
             }
         });
@@ -401,14 +373,11 @@
             "Making room for your plans",
             "Preparing your next stop"
         ];
-
         let loaderMessageIndex = 0;
 
         window.setInterval(() => {
             if (!loaderStatus) return;
-
             loaderStatus.classList.add("is-changing");
-
             window.setTimeout(() => {
                 loaderMessageIndex = (loaderMessageIndex + 1) % loaderMessages.length;
                 loaderStatus.textContent = loaderMessages[loaderMessageIndex];

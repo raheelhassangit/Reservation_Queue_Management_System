@@ -1,8 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
 from offerings.models import Offering, Seat
-from .models import Booking, BookingSeat
-
+from .models import Booking, BookingSeat, Waitlist
 
 
 class BookingSerializer(serializers.ModelSerializer):
@@ -34,3 +33,13 @@ class SeatSelectionSerializer(serializers.Serializer):
                 f"You can book at most {offering.max_seats_per_booking} seat(s) at once."
             )
         return data    
+    
+class JoinWaitlistSerializer(serializers.Serializer):
+    offering = serializers.PrimaryKeyRelatedField(queryset=Offering.objects.all())
+    seats_wanted = serializers.IntegerField(min_value=1, default=1)
+
+class WaitlistSerializer(serializers.ModelSerializer):
+    offering_name = serializers.CharField(source="offering.name", read_only=True)
+    class Meta:
+        model = Waitlist
+        fields = ["id", "offering", "offering_name", "seats_wanted", "created_at", "notified_at"]    
