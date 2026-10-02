@@ -4,4 +4,5 @@ from . import views_web
 urlpatterns = [
     path("mine/", views_web.my_bookings_page, name="booking-mine-page"),
     path("<int:pk>/confirmation/", views_web.booking_confirmation_page, name="booking-confirmation-page"),
+    path("waitlist/mine/", views_web.my_waitlist_page, name="waitlist-mine-page"),
 ]
