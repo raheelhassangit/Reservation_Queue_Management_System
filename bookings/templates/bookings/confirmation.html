@@ -47,23 +47,11 @@ async function loadBooking() {
             <span class="text-[#56616a]">Seats</span>
             <span class="font-semibold text-[#17202a]">${b.seats.join(", ")}</span>
         </div>
-        <div class="flex justify-between py-2 border-b border-[#e3dccf] text-sm">
-            <span class="text-[#56616a]">Total paid</span>
-            <span class="font-semibold text-[#17202a]">Rs. ${Number(b.total_price).toLocaleString()}</span>
-        </div>
         <div class="flex justify-between py-2 text-sm">
             <span class="text-[#56616a]">Booked on</span>
             <span class="font-semibold text-[#17202a]">${date}</span>
         </div>
     `;
-}
-
-if (!b.offering_active) {
-    document.getElementById("booking-details").insertAdjacentHTML("beforebegin", `
-        <p class="mb-4 rounded-xl bg-[#f8eeee] px-4 py-3 text-sm text-[#8d3034]">
-            This offering is no longer active. Your booking record is unaffected.
-        </p>
-    `);
 }
 
 loadBooking();

@@ -54,8 +54,8 @@ function offeringCard(o) {
         <span class="text-xs font-semibold uppercase tracking-[.15em] text-[#975b3d]">${o.category_display}</span>
         <h3 class="mt-2 text-xl font-semibold text-[#17202a]">${o.name}</h3>
         <p class="mt-1 text-xs text-[#899198]">${o.organization_name}</p>
-        ${place ? `<p class="mt-2 text-sm text-[#56616a]">📍 ${place}</p>` : ""}
-        ${when ? `<p class="text-sm text-[#56616a]">🕐 ${when}</p>` : ""}
+        ${place ? `<p class="mt-2 text-sm text-[#56616a]"> ${place}</p>` : ""}
+        ${when ? `<p class="text-sm text-[#56616a]"> ${when}</p>` : ""}
         <p class="mt-2 text-sm font-semibold text-[#6d3032]">Rs. ${Number(o.price).toLocaleString()}</p>
         <p class="mt-1 text-sm text-[#56616a]">${o.available_seats} / ${o.total_seats} seats available</p>
     </a>`;

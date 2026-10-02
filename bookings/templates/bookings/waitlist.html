@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}My Waitlist | ReserveX AI{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl">
+    <div class="mb-8">
+        <p class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">Your Account</p>
+        <h1 class="mt-1 text-3xl font-semibold text-[#17202a]">My Waitlist</h1>
+    </div>
+
+    <div id="waitlist-list" class="space-y-4"></div>
+    <p id="empty" class="hidden text-center text-[#56616a] py-16">
+        You're not waitlisted for anything — <a href="/offerings/" class="text-[#6d3032] font-semibold hover:underline">browse offerings</a>.
+    </p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function waitlistCard(entry) {
+    const date = new Date(entry.created_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+    const status = entry.notified_at
+        ? `<span class="rounded-full bg-[#eef6ee] px-2.5 py-0.5 text-xs font-semibold text-[#2f7a3c]">Seats available — check now</span>`
+        : `<span class="rounded-full bg-[#f3eee7] px-2.5 py-0.5 text-xs font-semibold text-[#975b3d]">Waiting</span>`;
+
+    return `
+    <div class="rounded-[1.5rem_.5rem_1.5rem_.5rem] border border-[#d9d2c8] bg-white p-6 flex items-center justify-between gap-4 flex-wrap">
+        <div>
+            <h3 class="text-lg font-semibold text-[#17202a] inline-flex items-center gap-2">${entry.offering_name} ${status}</h3>
+            <p class="mt-1 text-sm text-[#56616a]">Seats wanted: ${entry.seats_wanted}</p>
+            <p class="mt-1 text-xs text-[#899198]">Joined ${date}</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="/offerings/${entry.offering}/"
+               class="rounded-full border border-[#d9d2c8] px-4 py-2 text-sm font-semibold text-[#6d3032] hover:bg-[#f2ede5]">
+                View offering
+            </a>
+            <button onclick="leaveWaitlist(${entry.id})"
+                class="rounded-full border border-[#d9d2c8] px-4 py-2 text-sm font-semibold text-[#8d3034] hover:bg-[#f8eeee]">
+                Leave
+            </button>
+        </div>
+    </div>`;
+}
+
+async function guardCustomer() {
+    const res = await apiFetch("/accounts/me/");
+    if (!res.ok) return null;
+    const user = await res.json();
+    if (user.role !== "customer") { window.location.href = "/"; return null; }
+    return user;
+}
+
+async function loadWaitlist() {
+    const res = await apiFetch("/bookings/waitlist/mine/");
+    const data = await res.json();
+    const entries = data.results || data;
+
+    document.getElementById("empty").classList.toggle("hidden", entries.length > 0);
+    document.getElementById("waitlist-list").innerHTML = entries.map(waitlistCard).join("");
+}
+
+async function leaveWaitlist(id) {
+    const res = await apiFetch(`/bookings/waitlist/${id}/leave/`, { method: "POST" });
+    if (res.ok) loadWaitlist();
+    else alert("Could not leave the waitlist.");
+}
+
+(async () => {
+    const user = await guardCustomer();
+    if (user) loadWaitlist();
+})();
+</script>
+{% endblock %}

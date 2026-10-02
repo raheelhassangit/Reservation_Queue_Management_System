@@ -69,8 +69,8 @@ function renderHeader() {
         <span class="text-xs font-semibold uppercase tracking-[.18em] text-[#975b3d]">${offering.category_display}</span>
         <h1 class="mt-1 text-3xl font-semibold text-[#17202a]">${offering.name}</h1>
         <p class="mt-1 text-sm text-[#56616a]">${offering.organization_name}</p>
-        ${place ? `<p class="mt-2 text-sm text-[#56616a]">📍 ${place}</p>` : ""}
-        ${when ? `<p class="text-sm text-[#56616a]">🕐 ${when}</p>` : ""}
+        ${place ? `<p class="mt-2 text-sm text-[#56616a]"> ${place}</p>` : ""}
+        ${when ? `<p class="text-sm text-[#56616a]"> ${when}</p>` : ""}
         <p class="mt-2 text-lg font-semibold text-[#6d3032]">Rs. ${Number(offering.price).toLocaleString()} per seat</p>
         ${offering.description ? `<p class="mt-3 text-sm leading-6 text-[#56616a]">${offering.description}</p>` : ""}
         <p class="mt-3 text-sm text-[#56616a]">${offering.available_seats} / ${offering.total_seats} seats available</p>
