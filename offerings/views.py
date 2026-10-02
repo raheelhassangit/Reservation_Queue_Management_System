@@ -16,6 +16,9 @@ from .serializers import (
     OfferingUpdateSerializer,
 )
 
+from django.shortcuts import get_object_or_404
+from bookings.tasks import process_waitlist_task
+from offerings.models import Seat
 
 def offerings_queryset():
     now = timezone.now()
@@ -127,3 +130,22 @@ class ArchiveOfferingView(APIView):
         return Response({
             "is_active": offering.is_active
         })
+
+class AddSeatsView(APIView):
+    permission_classes = [IsProvider, IsOfferingOwner]
+    def post(self, request, pk):
+        offering = get_object_or_404(Offering, pk=pk)
+        self.check_object_permissions(request, offering)
+        count = int(request.data.get("count", 0))
+        if count <= 0:
+            return Response({"detail": "count must be positive."}, status=400)
+
+        start = offering.total_seats + 1
+        Seat.objects.bulk_create([
+            Seat(offering=offering, seat_number=str(i)) for i in range(start, start + count)
+        ])
+        offering.total_seats += count
+        offering.save(update_fields=["total_seats"])
+
+        process_waitlist_task.delay(offering.id)
+        return Response({"total_seats": offering.total_seats})        
