@@ -31,6 +31,10 @@ class Offering(models.Model):
     def display_category(self):
         return self.custom_category if self.category == self.Category.OTHER else self.get_category_display()
 
+    @property
+    def is_expired(self):
+        return self.starts_at is not None and self.starts_at <= timezone.now()
+    
     def __str__(self):
         return f"{self.name} ({self.organization.name})"
     
