@@ -9,9 +9,12 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
+
 from datetime import timedelta
 from pathlib import Path
+
 from decouple import config, Csv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,10 +26,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config("SECRET_KEY")
 
-SEAT_HOLD_MINUTES = config("SEAT_HOLD_MINUTES", default=5, cast=int)
+SEAT_HOLD_MINUTES = config(
+    "SEAT_HOLD_MINUTES",
+    default=5,
+    cast=int,
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=False, cast=bool)
+DEBUG = config(
+    "DEBUG",
+    default=False,
+    cast=bool,
+)
 
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
@@ -35,7 +46,9 @@ ALLOWED_HOSTS = config(
 )
 
 
+# -------------------------------------------------------------------
 # Application definition
+# -------------------------------------------------------------------
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -44,7 +57,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    
+
+    "cloudinary_storage",
+    "cloudinary",
     "rest_framework",
     "tailwind",
     "theme",
@@ -61,8 +76,10 @@ TAILWIND_APP_NAME = "theme"
 
 AUTH_USER_MODEL = "accounts.User"
 
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -71,23 +88,36 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
 ROOT_URLCONF = "config.urls"
+
+
+# -------------------------------------------------------------------
+# Django REST Framework
+# -------------------------------------------------------------------
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+
+    "DEFAULT_PAGINATION_CLASS": (
+        "rest_framework.pagination.PageNumberPagination"
+    ),
+
     "PAGE_SIZE": 10,
+
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.SearchFilter",
         "rest_framework.filters.OrderingFilter",
     ],
+
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",
     ],
+
     "DEFAULT_THROTTLE_RATES": {
         "anon": "30/minute",
         "user": "100/minute",
@@ -96,8 +126,13 @@ REST_FRAMEWORK = {
     },
 }
 
+
+# -------------------------------------------------------------------
+# Simple JWT
+# -------------------------------------------------------------------
+
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=59),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 
     "ROTATE_REFRESH_TOKENS": False,
@@ -106,11 +141,21 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
+
+# -------------------------------------------------------------------
+# Templates
+# -------------------------------------------------------------------
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+
+        "DIRS": [
+            BASE_DIR / "templates",
+        ],
+
         "APP_DIRS": True,
+
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
@@ -121,10 +166,13 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = "config.wsgi.application"
 
 
+# -------------------------------------------------------------------
 # Database
+# -------------------------------------------------------------------
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
 DATABASES = {
@@ -139,27 +187,61 @@ DATABASES = {
 }
 
 
+# -------------------------------------------------------------------
+# Cloudinary
+# -------------------------------------------------------------------
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": config(
+        "CLOUDINARY_CLOUD_NAME",
+        default="",
+    ),
+    "API_KEY": config(
+        "CLOUDINARY_API_KEY",
+        default="",
+    ),
+    "API_SECRET": config(
+        "CLOUDINARY_API_SECRET",
+        default="",
+    ),
+}
+
+
+# -------------------------------------------------------------------
 # Password validation
-# https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
+# -------------------------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
+        ),
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "MinimumLengthValidator"
+        ),
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "CommonPasswordValidator"
+        ),
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "NumericPasswordValidator"
+        ),
     },
 ]
 
 
+# -------------------------------------------------------------------
 # Internationalization
-# https://docs.djangoproject.com/en/6.1/topics/i18n/
+# -------------------------------------------------------------------
 
 LANGUAGE_CODE = "en-us"
 
@@ -170,8 +252,9 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.1/howto/static-files/
+# -------------------------------------------------------------------
+# Static files / Media files
+# -------------------------------------------------------------------
 
 STATIC_URL = "static/"
 
@@ -181,7 +264,33 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+
+STORAGES = {
+    "default": {
+        "BACKEND": (
+            "cloudinary_storage.storage.MediaCloudinaryStorage"
+            if not DEBUG
+            else "django.core.files.storage.FileSystemStorage"
+        ),
+    },
+
+    "staticfiles": {
+        "BACKEND": (
+            "whitenoise.storage."
+            "CompressedManifestStaticFilesStorage"
+        ),
+    },
+}
+
+
+MEDIA_URL = "/media/"
+
+MEDIA_ROOT = BASE_DIR / "media"
+
+
+# -------------------------------------------------------------------
 # Email
+# -------------------------------------------------------------------
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
 EMAIL_BACKEND = config(
@@ -189,7 +298,19 @@ EMAIL_BACKEND = config(
     default="django.core.mail.backends.console.EmailBackend",
 )
 
-CELERY_BROKER_URL = "redis://localhost:6379/0"
-CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
-CELERY_TIMEZONE = TIME_ZONE
 
+# -------------------------------------------------------------------
+# Celery / Redis
+# -------------------------------------------------------------------
+
+CELERY_BROKER_URL = config(
+    "CELERY_BROKER_URL",
+    default="redis://localhost:6379/0",
+)
+
+CELERY_RESULT_BACKEND = config(
+    "CELERY_RESULT_BACKEND",
+    default="redis://localhost:6379/0",
+)
+
+CELERY_TIMEZONE = TIME_ZONE
