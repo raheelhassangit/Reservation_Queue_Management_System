@@ -134,6 +134,28 @@ async function loadOffering() {
     offering = await res.json();
     renderHeader();
     renderSeats();
+
+    if (getAccessToken()) {
+        const meRes = await apiFetch("/accounts/me/");
+        if (meRes.ok) {
+            const user = await meRes.json();
+            if (user.role === "provider") {
+                document.getElementById("booking-bar").classList.add("hidden");
+                const existingWaitlistBar = document.getElementById("waitlist-bar");
+                if (existingWaitlistBar) existingWaitlistBar.remove();
+                document.querySelectorAll("#seat-grid button").forEach(btn => {
+                    btn.disabled = true;
+                    btn.classList.add("cursor-not-allowed", "opacity-50");
+                });
+                document.getElementById("seat-grid").insertAdjacentHTML("afterend", `
+                    <p class="mt-5 text-sm text-[#56616a] border-t border-[#eee9e2] pt-5">
+                        Provider accounts can't make bookings.
+                    </p>`);
+                return;
+            }
+        }
+    }
+
     if (offering.available_seats === 0 && !offering.is_expired) {
         document.getElementById("seat-grid").insertAdjacentHTML("afterend", `
             <div id="waitlist-bar" class="mt-7 flex items-center justify-between border-t border-[#eee9e2] pt-5">
@@ -151,31 +173,6 @@ async function loadOffering() {
         });
     }
 }
-
-document.getElementById("hold-btn").addEventListener("click", async () => {
-    if (!getAccessToken()) { window.location.href = "/login/"; return; }
-    hideError();
-
-    const res = await apiFetch("/bookings/hold/", {
-        method: "POST",
-        body: JSON.stringify({ offering: parseInt(offeringId, 10), seat_ids: Array.from(selectedSeats) }),
-    });
-
-    if (!res.ok) {
-        const data = await res.json();
-        showError(data.detail || JSON.stringify(data));
-        await loadOffering();
-        selectedSeats.clear();
-        return;
-    }
-
-    const data = await res.json();
-    heldSeats = data.seat_ids;
-    holdActive = true;
-    startHoldTimer(new Date(data.held_until));
-    document.getElementById("booking-bar").classList.add("hidden");
-    document.getElementById("confirm-bar").classList.remove("hidden");
-});
 
 function endHold() {
     holdActive = false;
