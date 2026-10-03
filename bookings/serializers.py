@@ -19,7 +19,8 @@ class BookingSerializer(serializers.ModelSerializer):
 
     def get_total_price(self, obj):
         return obj.offering.price * obj.booked_seats.count()
-    
+
+
 class SeatSelectionSerializer(serializers.Serializer):
     offering = serializers.PrimaryKeyRelatedField(queryset=Offering.objects.all())
     seat_ids = serializers.ListField(child=serializers.IntegerField(), allow_empty=False)
@@ -32,14 +33,16 @@ class SeatSelectionSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 f"You can book at most {offering.max_seats_per_booking} seat(s) at once."
             )
-        return data    
-    
+        return data
+
+
 class JoinWaitlistSerializer(serializers.Serializer):
     offering = serializers.PrimaryKeyRelatedField(queryset=Offering.objects.all())
     seats_wanted = serializers.IntegerField(min_value=1, default=1)
+
 
 class WaitlistSerializer(serializers.ModelSerializer):
     offering_name = serializers.CharField(source="offering.name", read_only=True)
     class Meta:
         model = Waitlist
-        fields = ["id", "offering", "offering_name", "seats_wanted", "created_at", "notified_at"]    
+        fields = ["id", "offering", "offering_name", "seats_wanted", "created_at", "notified_at"]
