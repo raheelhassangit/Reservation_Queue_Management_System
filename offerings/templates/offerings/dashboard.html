@@ -40,6 +40,30 @@
         </div>
     </div>
 </div>
+<div id="seats-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#1b242d]/60 backdrop-blur-sm px-4">
+    <div class="w-full max-w-sm rounded-[1.5rem_.5rem_1.5rem_.5rem] bg-white p-7 shadow-[0_20px_50px_rgba(27,36,45,.25)]">
+        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#f3eee7]">
+            <span class="text-2xl text-[#975b3d]">+</span>
+        </div>
+        <h3 class="mt-4 text-center text-lg font-semibold text-[#17202a]">Add seats</h3>
+        <p id="seats-modal-text" class="mt-2 text-center text-sm text-[#56616a]">
+            How many seats would you like to add to this offering?
+        </p>
+        <input id="seats-modal-input" type="number" min="1" placeholder="e.g. 20"
+            class="mt-5 w-full rounded-xl border border-[#d9d2c8] px-4 py-3 text-sm text-center outline-none focus:border-[#975b3d] focus:ring-2 focus:ring-[#d8b46c]/35">
+        <p id="seats-modal-error" class="hidden mt-2 text-center text-xs text-[#8d3034]"></p>
+        <div class="mt-6 flex gap-3">
+            <button id="seats-cancel-btn" type="button"
+                class="flex-1 rounded-full border border-[#d9d2c8] px-4 py-2.5 text-sm font-semibold text-[#29313a] hover:bg-[#f2ede5]">
+                Cancel
+            </button>
+            <button id="seats-confirm-btn" type="button"
+                class="flex-1 rounded-full bg-[#6d3032] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#4a1f25]">
+                Add Seats
+            </button>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -62,7 +86,7 @@ function offeringCard(o) {
         <p class="text-sm text-[#56616a]">Max ${o.max_seats_per_booking} per booking</p>
         <div class="mt-4 flex flex-wrap gap-3 text-sm font-semibold">
             <a href="/offerings/${o.id}/edit/" class="text-[#6d3032] hover:underline">Edit</a>
-            <button onclick="addSeats(${o.id})" class="text-[#6d3032] hover:underline">+ Seats</button>
+            <button onclick="openSeatsModal(${o.id}, '${o.name.replace(/'/g, "\\'")}')" class="text-[#6d3032] hover:underline">+ Seats</button>
             <button onclick="toggleArchive(${o.id})" class="${o.is_active ? "text-red-600" : "text-green-700"} hover:underline">
                 ${o.is_active ? "Archive" : "Restore"}
             </button>
@@ -103,14 +127,65 @@ async function toggleArchive(id) {
     else alert("Could not update this offering.");
 }
 
-async function addSeats(id) {
-    const count = prompt("How many seats to add?");
-    if (!count || isNaN(count)) return;
-    const res = await apiFetch(`/offerings/${id}/add-seats/`, {
-        method: "POST", body: JSON.stringify({ count: parseInt(count, 10) }),
-    });
-    if (res.ok) loadOfferings(); else alert("Could not add seats.");
+let pendingSeatsOfferingId = null;
+
+const seatsModal = document.getElementById("seats-modal");
+const seatsModalText = document.getElementById("seats-modal-text");
+const seatsModalInput = document.getElementById("seats-modal-input");
+const seatsModalError = document.getElementById("seats-modal-error");
+const seatsCancelBtn = document.getElementById("seats-cancel-btn");
+const seatsConfirmBtn = document.getElementById("seats-confirm-btn");
+
+function openSeatsModal(id, name) {
+    pendingSeatsOfferingId = id;
+    seatsModalText.textContent = `Add seats to "${name}".`;
+    seatsModalInput.value = "";
+    seatsModalError.classList.add("hidden");
+    seatsModal.classList.remove("hidden");
+    seatsModalInput.focus();
 }
+
+function closeSeatsModal() {
+    pendingSeatsOfferingId = null;
+    seatsModal.classList.add("hidden");
+}
+
+seatsCancelBtn.addEventListener("click", closeSeatsModal);
+seatsModal.addEventListener("click", (e) => {
+    if (e.target === seatsModal) closeSeatsModal();
+});
+
+seatsModalInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") seatsConfirmBtn.click();
+});
+
+seatsConfirmBtn.addEventListener("click", async () => {
+    const count = parseInt(seatsModalInput.value, 10);
+    if (!count || count <= 0) {
+        seatsModalError.textContent = "Enter a valid number of seats.";
+        seatsModalError.classList.remove("hidden");
+        return;
+    }
+
+    seatsConfirmBtn.disabled = true;
+    seatsConfirmBtn.textContent = "Adding...";
+
+    const res = await apiFetch(`/offerings/${pendingSeatsOfferingId}/add-seats/`, {
+        method: "POST",
+        body: JSON.stringify({ count }),
+    });
+
+    seatsConfirmBtn.disabled = false;
+    seatsConfirmBtn.textContent = "Add Seats";
+
+    if (res.ok) {
+        closeSeatsModal();
+        loadOfferings();
+    } else {
+        seatsModalError.textContent = "Could not add seats. Please try again.";
+        seatsModalError.classList.remove("hidden");
+    }
+});
 
 let pendingDeleteId = null;
 
