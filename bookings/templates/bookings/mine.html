@@ -13,11 +13,26 @@
     <p id="empty" class="hidden text-center text-[#56616a] py-16">
         You haven't booked anything yet — <a href="/offerings/" class="text-[#6d3032] font-semibold hover:underline">browse offerings</a>.
     </p>
+
+    <div id="pagination" class="hidden mt-8 flex items-center justify-center gap-4">
+        <button id="prev-btn" type="button"
+                class="rounded-full border border-[#d9d2c8] px-5 py-2 text-sm font-semibold text-[#6d3032] hover:bg-[#f2ede5] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent">
+            ← Previous
+        </button>
+        <span id="page-info" class="text-sm text-[#56616a]"></span>
+        <button id="next-btn" type="button"
+                class="rounded-full border border-[#d9d2c8] px-5 py-2 text-sm font-semibold text-[#6d3032] hover:bg-[#f2ede5] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent">
+            Next →
+        </button>
+    </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+const PAGE_SIZE = 10; // must match PAGE_SIZE in settings.py
+let currentPage = parseInt(new URLSearchParams(location.search).get("page")) || 1;
+
 function bookingCard(b) {
     const seatList = b.seats.join(", ");
     const date = new Date(b.created_at).toLocaleString(undefined, {
@@ -51,18 +66,42 @@ async function guardCustomer() {
     return user;
 }
 
-async function loadBookings() {
-    const res = await apiFetch("/bookings/");
-    const data = await res.json();
-    const bookings = data.results || data;
-
-    document.getElementById("empty").classList.toggle("hidden", bookings.length > 0);
-    document.getElementById("booking-list").innerHTML = bookings.map(bookingCard).join("");
+function renderPagination(data, page, count) {
+    const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
+    document.getElementById("pagination").classList.toggle("hidden", totalPages <= 1);
+    document.getElementById("page-info").textContent = `Page ${page} of ${totalPages}`;
+    document.getElementById("prev-btn").disabled = !data.previous;
+    document.getElementById("next-btn").disabled = !data.next;
 }
+
+async function loadBookings(page = 1) {
+    const res = await apiFetch(`/bookings/?page=${page}`);
+
+    if (!res.ok) {
+        // DRF returns 404 for an out-of-range page (e.g. stale ?page=9) -> fall back to page 1
+        if (res.status === 404 && page > 1) return loadBookings(1);
+        return;
+    }
+
+    const data = await res.json();
+    const bookings = data.results || data;       // paginated {results} or plain list
+    const count = data.count ?? bookings.length;
+    currentPage = page;
+
+    document.getElementById("empty").classList.toggle("hidden", count > 0);
+    document.getElementById("booking-list").innerHTML = bookings.map(bookingCard).join("");
+    renderPagination(data, page, count);
+
+    history.replaceState(null, "", page === 1 ? location.pathname : `?page=${page}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.getElementById("prev-btn").addEventListener("click", () => loadBookings(currentPage - 1));
+document.getElementById("next-btn").addEventListener("click", () => loadBookings(currentPage + 1));
 
 (async () => {
     const user = await guardCustomer();
-    if (user) loadBookings();
+    if (user) loadBookings(currentPage);
 })();
 </script>
 {% endblock %}
